@@ -26,7 +26,7 @@
 
 A small CLI app for fetching and displaying jokes on your terminal :clown_face:
 
-Jokes are taken from the [public JokeAPI](https://v2.jokeapi.dev/). A lot of the jokes on there are **VERY** dark and likely to be insulting. It is possible to filter out *some* of the gutter humor. To filter jokes, see the [flag section](#Flag).
+Jokes are taken from the [public JokeAPI](https://v2.jokeapi.dev/). A lot of the jokes on there are **VERY** dark and likely to be insulting. It is possible to filter out *some* of the gutter humor (but why tho? gutter humor is the best humor). To filter jokes, see the [flag section](#Flag).
 
 ## How to use it
 
