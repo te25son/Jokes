@@ -18,7 +18,10 @@ def get_joke(data: OptionData) -> IOResultE[str]:
 
 @impure_safe
 def _make_request(data: OptionData) -> Response:
-    params = {"type": data.type, "blacklistFlags": data.flags}
+    params = {
+        "type": data.type,
+        "blacklistFlags": "+".join(data.flags)
+    }
     with Client(params=params) as client:
         response = client.get(f"https://v2.jokeapi.dev/joke/{data.category}")
         response.raise_for_status()
