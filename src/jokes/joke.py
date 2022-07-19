@@ -6,17 +6,30 @@ from returns.maybe import Maybe
 
 @dataclass
 class Joke:
-    type: str | None
+    type: Maybe[str]
     joke: Maybe[str]
     setup: Maybe[str]
     delivery: Maybe[str]
     category: Maybe[str]
     error: "JokeError"
 
+
+    @property
+    def joke_by_type(self) -> dict[str, Maybe[str]]:
+        return {
+            Type.SINGLE.name.lower(): self.joke,
+            Type.TWOPART.name.lower(): Maybe.do(
+                "\n".join([s, d])
+                for s in self.setup
+                for d in self.delivery
+            )
+        }
+
+
     @staticmethod
     def create(data: dict[str, Any]) -> "Joke":
         return Joke(
-            type = data.get("type", None),
+            type = Maybe.from_optional(data.get("type")),
             joke = Maybe.from_optional(data.get("joke")),
             setup = Maybe.from_optional(data.get("setup")),
             delivery = Maybe.from_optional(data.get("delivery")),
@@ -24,16 +37,13 @@ class Joke:
             error = JokeError.create(data)
         )
 
+
     def __repr__(self) -> str:
-        if self.type == Type.SINGLE.name.lower():
-            return self.joke.unwrap()
-        if self.type == Type.TWOPART.name.lower():
-            return Maybe.do(
-                "\n".join([s, d])
-                for s in self.setup
-                for d in self.delivery
-            ).unwrap()
-        return self.error.error()
+        return (
+            self.type
+            .bind(lambda type: self.joke_by_type.get(type, Maybe.empty))
+            .value_or(self.error.error())
+        )
 
 
 @dataclass
@@ -43,6 +53,7 @@ class JokeError:
     causedBy: Maybe[list[str]]
     additionalInfo: Maybe[str]
 
+
     @staticmethod
     def create(data: dict[str, Any]) -> "JokeError":
         return JokeError(
@@ -51,6 +62,7 @@ class JokeError:
             causedBy = Maybe.from_optional(data.get("causedBy")),
             additionalInfo = Maybe.from_optional(data.get("additionalInfo"))
         )
+
 
     def error(self) -> str:
         """
@@ -68,6 +80,12 @@ class JokeError:
 
 
     def get_basic_error(self) -> Maybe[str]:
+        """
+        Gets the error when debug is set to false,
+        which is the returned `causedBy` message. If
+        that message does not exist, returns the base
+        `message`. Otherwise returns `Nothing`.
+        """
         return (
             self.causedBy
             .map(lambda errors: "\n".join(errors))
@@ -77,6 +95,12 @@ class JokeError:
 
     # TODO: Need a way to reach this bit of code.
     def get_debug_error(self) -> Maybe[str]:
+        """
+        Gets the error when debug is set to true,
+        which is a combined version of all fields in
+        the json response.
+        Otherwise returns `Nothing`.
+        """
         return Maybe.do(
             "\n".join([message, *errors, additional])
             for message in self.message
