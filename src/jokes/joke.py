@@ -37,17 +37,13 @@ class Joke:
             error = JokeError.create(data)
         )
 
-      
-    def get_joke_string(self) -> Maybe[str]:
-        """
-        Gets the joke based on the type. If there
-        is no type, or no type matches, returns `Nothing`.
-        """
-        return self.type.bind(lambda type: self.joke_by_type.get(type, Maybe.empty))
-
 
     def __repr__(self) -> str:
-        return self.get_joke_string().value_or(self.error.error())
+        return (
+            self.type
+            .bind(lambda type: self.joke_by_type.get(type, Maybe.empty))
+            .value_or(self.error.error())
+        )
 
 
 @dataclass
