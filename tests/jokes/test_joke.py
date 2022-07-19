@@ -57,7 +57,7 @@ class TestJoke:
     def test_single_joke_success(self, valid_single_data: dict[str, Any]):
         joke = Joke.create(valid_single_data)
 
-        assert joke.type == valid_single_data["type"]
+        assert joke.type == Some(valid_single_data["type"])
         assert joke.category == Some(valid_single_data["category"])
         assert joke.joke == Some(valid_single_data["joke"])
         assert joke.delivery == Nothing
@@ -70,7 +70,7 @@ class TestJoke:
         setup = valid_twopart_data["setup"]
         delivery = valid_twopart_data["delivery"]
 
-        assert joke.type == valid_twopart_data["type"]
+        assert joke.type == Some(valid_twopart_data["type"])
         assert joke.category == Some(valid_twopart_data["category"])
         assert joke.joke == Nothing
         assert joke.delivery == Some(valid_twopart_data["delivery"])
@@ -81,7 +81,7 @@ class TestJoke:
     def test_error_success(self, valid_error_data: dict[str, Any]):
         joke = Joke.create(valid_error_data)
 
-        assert joke.type == None
+        assert joke.type == Nothing
         assert joke.category == Nothing
         assert joke.joke == Nothing
         assert joke.delivery == Nothing
@@ -96,7 +96,7 @@ class TestJoke:
     def test_joke_invalid_data(self):
         joke = Joke.create({})
 
-        assert joke.type == None
+        assert joke.type == Nothing
         assert joke.category == Nothing
         assert joke.joke == Nothing
         assert joke.delivery == Nothing
