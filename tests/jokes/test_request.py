@@ -3,6 +3,7 @@ import pytest
 from jokes.options import OptionData, Type, Flag, Category
 from jokes.request import _make_request, _deserialize
 from returns.unsafe import unsafe_perform_io
+from returns.maybe import Nothing
 
 
 class TestRequest:
@@ -15,7 +16,10 @@ class TestRequest:
         response = unsafe_perform_io(_make_request(data).bind_result(_deserialize).unwrap())
 
         assert response.type == type.name.lower()
-        assert response.error == False
+        assert response.error.internalError == False
+        assert response.error.message == Nothing
+        assert response.error.causedBy == Nothing
+        assert response.error.additionalInfo == Nothing
 
 
     @staticmethod
