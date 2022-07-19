@@ -31,12 +31,10 @@ def _make_request(data: OptionData) -> Response:
 
 @safe
 def _deserialize(response: Response) -> Joke:
-    return Joke(response.json())
+    return Joke.create(response.json())
 
 
 @safe
 def _get_content(joke: Joke) -> str:
-    if joke.error:
-        return "An unexpected error occurred."
     return str(joke)
     
