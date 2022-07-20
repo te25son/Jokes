@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from typing import Any
 from jokes.options import Type
-from returns.maybe import Maybe
+from returns.maybe import Maybe, maybe
+from click import get_current_context
+from click.core import Context
 
 
 @dataclass
@@ -52,6 +54,21 @@ class JokeError:
     message: Maybe[str]
     causedBy: Maybe[list[str]]
     additionalInfo: Maybe[str]
+    
+    
+    @property
+    def debug(self) -> bool:
+        """
+        Gets the debug value from the current
+        thread's context if it exists. If neither
+        the thread nor the value exist, returns
+        False.
+        """
+        return (
+            self.get_context()
+            .map(lambda ctx: ctx.obj.get("DEBUG"))
+            .value_or(False)
+        )
 
 
     @staticmethod
@@ -75,8 +92,20 @@ class JokeError:
         """
         if self.internalError:
             return "An internal JokeAPI error occurred"
+        
+        get_error = self.get_debug_error if self.debug else self.get_basic_error
 
-        return self.get_basic_error().value_or("An unexpected error occurred.")
+        return get_error().value_or("An unexpected error occurred.")
+    
+    
+    @maybe
+    def get_context(self) -> Context | None:
+        """
+        Gets the current thread's context. If no
+        context exists, silently fails and returns
+        None instead.
+        """
+        return get_current_context(silent=True)
 
 
     def get_basic_error(self) -> Maybe[str]:

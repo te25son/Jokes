@@ -4,9 +4,21 @@ from jokes.options import Type, Flag, Category, OptionData, as_list
 from jokes.request import get_joke
 from returns.unsafe import unsafe_perform_io
 from returns.functions import raise_exception
+from click.core import Context
 
 
-@click.command()
+@click.group()
+@click.option(
+    "--debug/--no-debug", "debug",
+    default=False
+)
+@click.pass_context
+def jokes(ctx: Context, debug: bool):
+    ctx.ensure_object(dict)
+    ctx.obj["DEBUG"] = debug
+
+
+@jokes.command()
 @click.option(
     "-c", "--category", "category",
     type=click.Choice(as_list(Category), case_sensitive=False),
@@ -27,14 +39,11 @@ from returns.functions import raise_exception
     """,
     default=[]
 )
-@click.option(
-    "--debug/--no-debug", "debug",
-    default=False
-)
-def main(category: str, type: str, flags: list[str], debug: bool) -> None:
+@click.pass_context
+def get(ctx: Context, category: str, type: str, flags: list[str]) -> None:
     joke = get_joke(OptionData(category, type, flags))
 
-    if debug:
+    if ctx.obj["DEBUG"]:
         result = joke.alt(raise_exception).unwrap()
     else:
         result = joke.value_or("An unexpected error occurred.")
