@@ -1,7 +1,7 @@
 import pytest
 
 from click.testing import CliRunner, Result
-from jokes.app import main
+from jokes.app import jokes
 
 
 class TestCLI:
@@ -11,14 +11,14 @@ class TestCLI:
 
 
     def test_basic_cli_command(self):
-        result = self.runner.invoke(main)
+        result = self.runner.invoke(jokes)
 
         assert result.exit_code == 0
         assert result.output is not None
 
 
     def test_non_existing_options(self):
-        self._assert_exception(self._invoke_main("-d", "nothing"))
+        self._assert_exception(self._invoke_get("-d", "nothing"))
 
 
     @pytest.mark.parametrize("arg, value", [
@@ -28,7 +28,7 @@ class TestCLI:
         ("--type", "twopart")
     ])
     def test_valid_type_options(self, arg: str, value: str):
-        self._assert_successful(self._invoke_main(arg, value))
+        self._assert_successful(self._invoke_get(arg, value))
 
 
     @pytest.mark.parametrize("arg, value", [
@@ -36,7 +36,7 @@ class TestCLI:
         ("--type", "nonexistent")
     ])
     def test_invalid_type_options(self, arg: str, value: str):
-        self._assert_exception(self._invoke_main(arg, value))
+        self._assert_exception(self._invoke_get(arg, value))
 
 
     @pytest.mark.parametrize("arg, value", [
@@ -56,7 +56,7 @@ class TestCLI:
         ("--category", "christmas")
     ])
     def test_valid_category_options(self, arg: str, value: str):
-        self._assert_successful(self._invoke_main(arg, value))
+        self._assert_successful(self._invoke_get(arg, value))
 
 
     @pytest.mark.parametrize("arg, value", [
@@ -64,7 +64,7 @@ class TestCLI:
         ("--category", "nonexistent")
     ])
     def test_invalid_category_options(self, arg: str, value: str):
-        self._assert_exception(self._invoke_main(arg, value))
+        self._assert_exception(self._invoke_get(arg, value))
 
 
     @pytest.mark.parametrize("arg, value", [
@@ -82,7 +82,7 @@ class TestCLI:
         ("--flag", "explicit")
     ])
     def test_valid_flag_options(self, arg: str, value: str):
-        self._assert_successful(self._invoke_main(arg, value))
+        self._assert_successful(self._invoke_get(arg, value))
 
 
     @pytest.mark.parametrize("arg, value", [
@@ -90,11 +90,11 @@ class TestCLI:
         ("--flag", "nonexistent")
     ])
     def test_invalid_flag_options(self, arg: str, value: str):
-        self._assert_exception(self._invoke_main(arg, value))
+        self._assert_exception(self._invoke_get(arg, value))
 
 
-    def _invoke_main(self, arg: str, value: str) -> Result:
-        return self.runner.invoke(main, [arg, value])
+    def _invoke_get(self, arg: str, value: str) -> Result:
+        return self.runner.invoke(jokes, ["get", arg, value])
 
 
     def _assert_successful(self, result: Result) -> None:

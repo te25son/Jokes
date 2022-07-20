@@ -36,8 +36,8 @@ Once installed, clone this repo and "cd" your way into the created folder, e.g. 
 
 You will then have two options:
 
-1. Run the command `poetry shell` which activates the virtual environment. Once activated, you can simply call `jokes` in your terminal and the jokes will be displayed on your screen. Don't forget to `exit` the virtual environment when finished laughing.
-2. Forget the virtual environment and run the command `poetry run jokes`. Any arguments you wish to add can come after this.
+1. Run the command `poetry shell` which activates the virtual environment. Once activated, you can simply call `jokes get` in your terminal and the jokes will be displayed on your screen. Don't forget to `exit` the virtual environment when finished laughing.
+2. Forget the virtual environment and run the command `poetry run jokes get`. Any arguments you wish to add can come after this.
 
 ## Options (arguments)
 
@@ -45,29 +45,29 @@ There are a few arguments you can use when calling jokes.
 
 ### Category
 
-> Example: `jokes -c Any` or `jokes --category Any`
+> Example: `jokes get -c Any` or `jokes get --category Any`
 >
 > Default: Any
 
-The category tag will specify which category your joke will be in. Use `jokes --help` to see available categories.
+The category tag will specify which category your joke will be in. Use `jokes get --help` to see available categories.
 
 ### Type
 
-> Example: `jokes -t Single` or `jokes --type Single`
+> Example: `jokes get -t Single` or `jokes get --type Single`
 >
 > Default: Single
 
-Choose the type of joke, either a single oneliner or a two-parter. Use `jokes --help` to see available types.
+Choose the type of joke, either a single oneliner or a two-parter. Use `jokes get --help` to see available types.
 
 ### Flag
 
-> Example: `jokes -f nsfw -f explicit` or `jokes --flag nsfw`
+> Example: `jokes get -f nsfw -f explicit` or `jokes get --flag nsfw`
 >
 > Default: []
 
 The flag option can be used once, multiple times, or not at all. It is used to try to filter out unwanted jokes. But it isn't an exact science, so don't be surprised if it doesn't filter out everything.
 
-Use `jokes --help` to see available flags.
+Use `jokes get --help` to see available flags.
 
 ## Development
 
