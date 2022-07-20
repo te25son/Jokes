@@ -43,7 +43,7 @@ def jokes(ctx: Context, debug: bool):
 def get(ctx: Context, category: str, type: str, flags: list[str]) -> None:
     joke = get_joke(OptionData(category, type, flags))
 
-    if ctx.obj["DEBUG"]:
+    if ctx.obj.get("DEBUG", False):
         result = joke.alt(raise_exception).unwrap()
     else:
         result = joke.value_or("An unexpected error occurred.")
