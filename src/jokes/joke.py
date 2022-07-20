@@ -122,7 +122,6 @@ class JokeError:
         )
 
 
-    # TODO: Need a way to reach this bit of code.
     def get_debug_error(self) -> Maybe[str]:
         """
         Gets the error when debug is set to true,
