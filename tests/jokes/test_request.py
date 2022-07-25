@@ -1,9 +1,8 @@
 import pytest
-
+from jokes.models.joke import Joke
 from jokes.options import OptionData, Type, Flag, Category
-from jokes.request import _make_request, _deserialize
+from jokes.request import make_request, deserialize
 from returns.unsafe import unsafe_perform_io
-from returns.maybe import Some, Nothing
 
 
 class TestRequest:
@@ -13,13 +12,10 @@ class TestRequest:
     ])
     def test_type_option_creates_correct_response(self, type: Type):
         data = self._create_option_data(type=type)
-        response = unsafe_perform_io(_make_request(data).bind_result(_deserialize).unwrap())
+        response = unsafe_perform_io(make_request(data).bind_result(deserialize).unwrap())
 
-        assert response.type == Some(type.name.lower())
-        assert response.error.internalError == False
-        assert response.error.message == Nothing
-        assert response.error.causedBy == Nothing
-        assert response.error.additionalInfo == Nothing
+        assert isinstance(response, Joke)
+        assert response.type == type.name.lower()
 
 
     @staticmethod
