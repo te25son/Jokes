@@ -13,7 +13,6 @@ class TestJoke:
             'category': 'Dark',
             'type': 'single',
             'joke': "Some funny joke.",
-            'setup': "This shouldn't work.",
             'flags': {
                 'nsfw': False,
                 'religious': False,
