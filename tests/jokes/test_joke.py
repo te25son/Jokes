@@ -89,4 +89,5 @@ class TestJoke:
 
 
     def test_joke_invalid_data(self):
+        # TODO: make test for invalid data.
         pass
