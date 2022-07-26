@@ -3,8 +3,8 @@ from httpx import Response, Client
 from returns.io import IOResultE, impure_safe
 from returns.result import safe
 from returns.pipeline import flow
-from returns.pointfree import bind_ioresult
-from jokes.models.joke import SubmitJoke
+from returns.pointfree import bind_ioresult, bind_result
+from jokes.models.joke import SubmitJoke, SubmittedJokeResponse
 from jokes.models.error import Error
 
 
@@ -22,7 +22,8 @@ def submit_joke(data: JokeSubmitData) -> IOResultE[Response]:
     return flow(
         data,
         make_joke,
-        bind_ioresult(submit_request)
+        bind_ioresult(submit_request),
+        bind_result(deserialize_response)
     )
 
 
@@ -39,6 +40,8 @@ def submit_request(data: str) -> Response:
 
         return response
 
+
 @safe
-def deserialize_response(response: Response) -> Error:
-    return Error(**response.json())
+def deserialize_response(response: Response) -> SubmittedJokeResponse | Error:
+    response_as_json = response.json()
+    return SubmittedJokeResponse(**response_as_json) if not response_as_json["error"] else Error(**response_as_json)

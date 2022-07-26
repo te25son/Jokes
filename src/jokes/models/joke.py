@@ -69,3 +69,7 @@ class SubmitJoke(Joke):
     formatVersion: int = 3
     lang: str = "en"
     flags: Flags
+
+
+class SubmittedJokeResponse(BaseModel):
+    message: str
