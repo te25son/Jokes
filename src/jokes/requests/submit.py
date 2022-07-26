@@ -9,7 +9,7 @@ from jokes.models.error import Error
 
 
 @dataclass
-class JokeSubmitData:
+class SubmitJokeData:
     type: str
     category: str
     flags: dict[str, bool]
@@ -18,7 +18,7 @@ class JokeSubmitData:
     delivery: str | None = None
 
 
-def submit_joke(data: JokeSubmitData) -> IOResultE[Response]:
+def submit_joke(data: SubmitJokeData) -> IOResultE[Response]:
     return flow(
         data,
         make_joke,
@@ -28,7 +28,7 @@ def submit_joke(data: JokeSubmitData) -> IOResultE[Response]:
 
 
 @impure_safe
-def make_joke(data: JokeSubmitData) -> str:
+def make_joke(data: SubmitJokeData) -> str:
     return SubmitJoke(**data.__dict__).json(exclude_none=True)
 
 

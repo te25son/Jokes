@@ -2,7 +2,7 @@ import click
 
 from jokes.options import Type, Flag, Category, OptionData, as_list
 from jokes.request import get_joke
-from jokes.requests.submit import submit_joke, JokeSubmitData
+from jokes.requests.submit import submit_joke, SubmitJokeData
 from returns.unsafe import unsafe_perform_io
 from returns.functions import raise_exception
 from returns.io import IOResultE, IO
@@ -73,7 +73,11 @@ def get(ctx: Context, category: str, type: str, flags: list[str]) -> None:
 @click.pass_context
 def submit(ctx: Context, category: str, type: str, flags: list[str]) -> None:
     flags_as_dict = {f.lower(): True for f in flags}
-    joke = JokeSubmitData(
+
+    # Use SubmitJokeData instead of SubmitJoke to delay validation.
+    # We don't want validation errors to appear on the screen immediately
+    # or without debug.
+    joke = SubmitJokeData(
         type=type,
         category=category,
         flags=flags_as_dict
