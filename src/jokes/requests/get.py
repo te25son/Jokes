@@ -41,4 +41,3 @@ def deserialize(response: Response) -> Joke | Error:
 @safe
 def get_content(model: Joke | Error) -> str:
     return model.as_string()
-    
