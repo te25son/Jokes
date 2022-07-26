@@ -1,7 +1,7 @@
 import click
 
 from jokes.options import Type, Flag, Category, OptionData, as_list
-from jokes.request import get_joke
+from jokes.requests.get import get_joke
 from jokes.requests.submit import submit_joke, SubmitJokeData
 from returns.unsafe import unsafe_perform_io
 from returns.functions import raise_exception
