@@ -1,4 +1,5 @@
 from jokes.options import Type
+from jokes.models.flags import Flags
 from pydantic import validator, BaseModel
 from returns.maybe import Maybe
 
@@ -62,3 +63,13 @@ class Joke(BaseModel):
             self.joke_by_type.get(self.type, Maybe.empty)
             .value_or(f"Could not find joke with type: '{self.type}'.")
         )
+
+
+class SubmitJoke(Joke):
+    formatVersion: int = 3
+    lang: str = "en"
+    flags: Flags
+
+
+class SubmittedJoke(BaseModel):
+    message: str
