@@ -71,5 +71,5 @@ class SubmitJoke(Joke):
     flags: Flags
 
 
-class SubmittedJokeResponse(BaseModel):
+class SubmittedJoke(BaseModel):
     message: str

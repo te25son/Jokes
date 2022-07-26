@@ -4,7 +4,7 @@ from returns.io import IOResultE, impure_safe
 from returns.result import safe
 from returns.pipeline import flow
 from returns.pointfree import bind_ioresult, bind_result
-from jokes.models.joke import SubmitJoke, SubmittedJokeResponse
+from jokes.models.joke import SubmitJoke, SubmittedJoke
 from jokes.models.error import Error
 
 
@@ -42,6 +42,6 @@ def submit_request(data: str) -> Response:
 
 
 @safe
-def deserialize_response(response: Response) -> SubmittedJokeResponse | Error:
+def deserialize_response(response: Response) -> SubmittedJoke | Error:
     response_as_json = response.json()
-    return SubmittedJokeResponse(**response_as_json) if not response_as_json["error"] else Error(**response_as_json)
+    return SubmittedJoke(**response_as_json) if not response_as_json["error"] else Error(**response_as_json)
