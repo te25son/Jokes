@@ -50,7 +50,7 @@ def get(ctx: Context, category: str, type: str, flags: list[str]) -> None:
 
 
 # Turned off for now since the api is not allowing submissions at the moment
-@jokes.command()
+# @jokes.command()
 @click.option(
     "-c", "--category", "category",
     type=click.Choice(as_list(Category)[1:], case_sensitive=False),

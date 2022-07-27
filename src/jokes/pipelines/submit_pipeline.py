@@ -12,14 +12,14 @@ def submit_joke(data: SubmitJoke) -> IOResultE[Response]:
 
     return flow(
         data,
-        make_joke,
+        joke_to_json,
         bind_ioresult(submit_request),
         bind_result(deserialize)
     )
 
 
 @impure_safe
-def make_joke(data: SubmitJoke) -> str:
+def joke_to_json(data: SubmitJoke) -> str:
     return data.json(exclude_none=True)
 
 
