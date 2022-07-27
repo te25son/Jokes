@@ -1,7 +1,7 @@
 import pytest
 from jokes.models.joke import Joke
 from jokes.options import OptionData, Type, Flag, Category
-from jokes.requests.get import make_request, deserialize
+from jokes.pipelines.get_pipeline import make_request, deserialize
 from returns.unsafe import unsafe_perform_io
 
 
