@@ -5,6 +5,11 @@ from returns.maybe import Maybe
 
 
 class Joke(BaseModel):
+    """
+    Base joke class with validation. Also used for
+    deserializing the response of the `get` endpoint.
+    """
+
     type: str
     category: str
     setup: str | None = None
@@ -66,10 +71,17 @@ class Joke(BaseModel):
 
 
 class SubmitJoke(Joke):
+    """Class for creating the data necessary to submit a joke."""
+
     formatVersion: int = 3
     lang: str = "en"
     flags: Flags
 
+    class Config:
+        validate_assignment = True
+
 
 class SubmittedJoke(BaseModel):
+    """Class for deserializing the response of a submitted joke."""
+
     message: str

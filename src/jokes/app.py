@@ -1,8 +1,9 @@
 import click
 
 from jokes.options import Type, Flag, Category, OptionData, as_list
-from jokes.requests.get import get_joke
-from jokes.requests.submit import submit_joke, SubmitJokeData
+from jokes.pipelines.get_pipeline import get_joke
+from jokes.pipelines.submit_pipeline import submit_joke
+from jokes.models.joke import SubmitJoke
 from returns.unsafe import unsafe_perform_io
 from returns.functions import raise_exception
 from returns.io import IOResultE, IO
@@ -49,7 +50,7 @@ def get(ctx: Context, category: str, type: str, flags: list[str]) -> None:
 
 
 # Turned off for now since the api is not allowing submissions at the moment
-# @jokes.command()
+@jokes.command()
 @click.option(
     "-c", "--category", "category",
     type=click.Choice(as_list(Category)[1:], case_sensitive=False),
@@ -73,11 +74,7 @@ def get(ctx: Context, category: str, type: str, flags: list[str]) -> None:
 @click.pass_context
 def submit(ctx: Context, category: str, type: str, flags: list[str]) -> None:
     flags_as_dict = {f.lower(): True for f in flags}
-
-    # Use SubmitJokeData instead of SubmitJoke to delay validation.
-    # We don't want validation errors to appear on the screen immediately
-    # or without debug.
-    joke = SubmitJokeData(
+    joke = SubmitJoke(
         type=type,
         category=category,
         flags=flags_as_dict
@@ -94,6 +91,9 @@ def submit(ctx: Context, category: str, type: str, flags: list[str]) -> None:
 
 
 def unwrap(ctx: Context, result: IOResultE) -> IO:
+    """
+    Safely unwraps the IO result from a pipeline.
+    """
     if ctx.obj.get("DEBUG", False):
         return result.alt(raise_exception).unwrap()
     else:
