@@ -9,6 +9,8 @@ from jokes.models.error import Error
 
 
 def get_joke(data: OptionData) -> IOResultE[str]:
+    """Flow/Pipeline for safely getting a joke from the JokeAPI"""
+
     return flow(
         data,
         make_request,
@@ -19,6 +21,11 @@ def get_joke(data: OptionData) -> IOResultE[str]:
 
 @impure_safe
 def make_request(data: OptionData) -> Response:
+    """
+    Makes a GET request to the Joke API /joke endpoint.
+    Raises an error if the response's status code is not 200
+    """
+
     params = dict(
         type = data.type,
         blacklistFlags = "+".join(data.flags)
@@ -32,6 +39,8 @@ def make_request(data: OptionData) -> Response:
 
 @safe
 def deserialize(response: Response) -> Joke | Error:
+    """Safely deserializes the API response."""
+
     response_data: dict = response.json()
     is_error: bool = response_data["error"]
 
@@ -40,4 +49,6 @@ def deserialize(response: Response) -> Joke | Error:
 
 @safe
 def get_content(model: Joke | Error) -> str:
+    """Safely gets the content of the deserialized object."""
+
     return model.as_string()

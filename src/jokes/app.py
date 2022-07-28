@@ -1,9 +1,9 @@
 import click
 
+from types import SimpleNamespace
 from jokes.options import Type, Flag, Category, OptionData, as_list
 from jokes.pipelines.get_pipeline import get_joke
 from jokes.pipelines.submit_pipeline import submit_joke
-from jokes.models.joke import SubmitJoke
 from returns.unsafe import unsafe_perform_io
 from returns.functions import raise_exception
 from returns.io import IOResultE, IO
@@ -73,11 +73,10 @@ def get(ctx: Context, category: str, type: str, flags: list[str]) -> None:
 )
 @click.pass_context
 def submit(ctx: Context, category: str, type: str, flags: list[str]) -> None:
-    flags_as_dict = {f.lower(): True for f in flags}
-    joke = SubmitJoke(
+    joke = SimpleNamespace(
         type=type,
         category=category,
-        flags=flags_as_dict
+        flags={f.lower(): True for f in flags}
     )
 
     if type == Type.TWOPART.name:
@@ -87,7 +86,7 @@ def submit(ctx: Context, category: str, type: str, flags: list[str]) -> None:
     elif type == Type.SINGLE.name:
         joke.joke = click.prompt("Joke", type=str)
 
-    click.echo(unsafe_perform_io(unwrap(ctx, submit_joke(joke))))
+    click.echo(unsafe_perform_io(unwrap(ctx, submit_joke(joke.__dict__))))
 
 
 def unwrap(ctx: Context, result: IOResultE) -> IO:

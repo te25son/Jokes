@@ -1,6 +1,6 @@
 from jokes.options import Type
 from jokes.models.flags import Flags
-from pydantic import validator, BaseModel
+from pydantic import root_validator, BaseModel
 from returns.maybe import Maybe
 
 
@@ -20,8 +20,8 @@ class Joke(BaseModel):
     @property
     def joke_by_type(self) -> dict[str, Maybe[str]]:
         return {
-            Type.SINGLE.name.lower(): Maybe.from_optional(self.joke),
-            Type.TWOPART.name.lower(): Maybe.do(
+            Type.SINGLE.name.casefold(): Maybe.from_optional(self.joke),
+            Type.TWOPART.name.casefold(): Maybe.do(
                 "\n".join([s, d])
                 for s in Maybe.from_optional(self.setup)
                 for d in Maybe.from_optional(self.delivery)
@@ -29,43 +29,32 @@ class Joke(BaseModel):
         }
 
 
-    @validator("setup", "delivery")
-    def setup_and_delivery_can_only_be_defined_with_twopart_type(cls, v: str, values: dict):
-        return cls._check_value_should_exist_for_type(
-            value=v,
-            values=values,
-            type=Type.TWOPART,
-            error_message="""
-                Setup and delivery can only be defined in a twopart joke. All
-                twopart jokes must contain both a setup and delivery.
-            """
-        )
+    @root_validator(pre=True)
+    def check_valid_joke(cls, values: dict) -> dict:
+        """Validates that the incoming joke data is valid."""
 
+        type: str = values["type"].casefold()
+        setup, delivery, joke = values.get("setup"), values.get("delivery"), values.get("joke")
 
-    @validator("joke")
-    def joke_can_only_be_defined_with_single_type(cls, v: str, values: dict):
-        return cls._check_value_should_exist_for_type(
-            value=v,
-            values=values,
-            type=Type.SINGLE,
-            error_message="""
-                Joke can only be defined in a single joke. All single jokes must
-                contain a joke.
-            """
-        )
+        if type == Type.TWOPART.name.casefold():
+            assert setup is not None, "Setup field must be included in a twopart joke."
+            assert delivery is not None, "Delivery field must be included in a twopart joke."
+            assert joke is None, "Joke field cannot be included in a twopart joke."
 
+        elif type == Type.SINGLE.name.casefold():
+            assert setup is None, "Setup field cannot be included in a twopart joke."
+            assert delivery is None, "Delivery field cannot be included in a twopart joke."
+            assert joke is not None, "Joke field must be included in a twopart joke."
 
-    @staticmethod
-    def _check_value_should_exist_for_type(value: str, values: dict, type: Type, error_message: str) -> str:
-        type_as_string: str = values["type"]
-        if value and not type_as_string.lower() == type.name.lower():
-            raise ValueError(error_message)
-        return value
+        else:
+            raise ValueError(f"Unknown joke type: {type}.")
+
+        return values
 
 
     def as_string(self) -> str:
         return (
-            self.joke_by_type.get(self.type, Maybe.empty)
+            self.joke_by_type.get(self.type.casefold(), Maybe.empty)
             .value_or(f"Could not find joke with type: '{self.type}'.")
         )
 
@@ -76,9 +65,6 @@ class SubmitJoke(Joke):
     formatVersion: int = 3
     lang: str = "en"
     flags: Flags
-
-    class Config:
-        validate_assignment = True
 
 
 class SubmittedJoke(BaseModel):
