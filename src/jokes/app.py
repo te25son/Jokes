@@ -97,3 +97,7 @@ def unwrap(ctx: Context, result: IOResultE) -> IO:
         return result.alt(raise_exception).unwrap()
     else:
         return result.value_or("An unexpected error occurred.")
+
+
+if __name__ == "__main__":
+    jokes(args=["get"])
