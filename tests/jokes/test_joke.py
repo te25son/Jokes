@@ -171,4 +171,4 @@ class TestJoke:
         with pytest.raises(ValidationError) as ex:
             joke_class(**simple_joke_data.__dict__)
 
-        assert "Delivery field cannot be included in a twopart joke." in str(ex.value.args)
+        assert "Delivery field cannot be included in a single joke." in str(ex.value.args)
