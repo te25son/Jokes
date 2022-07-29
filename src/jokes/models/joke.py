@@ -33,21 +33,18 @@ class Joke(BaseModel):
     def check_valid_joke(cls, values: dict) -> dict:
         """Validates that the incoming joke data is valid."""
 
-        type: str = values["type"].casefold()
+        type = values.get("type", "")
         setup, delivery, joke = values.get("setup"), values.get("delivery"), values.get("joke")
 
-        if type == Type.TWOPART.name.casefold():
+        if type.casefold() == Type.TWOPART.name.casefold():
             assert setup is not None, "Setup field must be included in a twopart joke."
             assert delivery is not None, "Delivery field must be included in a twopart joke."
             assert joke is None, "Joke field cannot be included in a twopart joke."
 
-        elif type == Type.SINGLE.name.casefold():
-            assert setup is None, "Setup field cannot be included in a twopart joke."
-            assert delivery is None, "Delivery field cannot be included in a twopart joke."
-            assert joke is not None, "Joke field must be included in a twopart joke."
-
-        else:
-            raise ValueError(f"Unknown joke type: {type}.")
+        elif type.casefold() == Type.SINGLE.name.casefold():
+            assert setup is None, "Setup field cannot be included in a single joke."
+            assert delivery is None, "Delivery field cannot be included in a single joke."
+            assert joke is not None, "Joke field must be included in a single joke."
 
         return values
 
