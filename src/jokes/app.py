@@ -100,4 +100,15 @@ def unwrap(ctx: Context, result: IOResultE) -> IO:
 
 
 if __name__ == "__main__":
+    """
+    This entrypoint is primarily used for debugging purposes.
+    In order to debug certain commands and options, manually
+    add/remove arguments from the list.
+
+    For example, if you want to run the submit command with a
+    specific catgory, you would use:
+
+    >>> jokes(args=["submit", "-c", "{category}"])
+    """
+
     jokes(args=["get"])
