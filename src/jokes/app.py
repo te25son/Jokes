@@ -1,4 +1,5 @@
 import click
+import random
 
 from types import SimpleNamespace
 from jokes.options import Type, Flag, Category, OptionData, as_list
@@ -29,8 +30,8 @@ def jokes(ctx: Context, debug: bool):
 )
 @click.option(
     "-t", "--type", "type",
-    type=click.Choice(as_list(Type), case_sensitive=False),
-    default=Type.SINGLE.name
+    type=click.Choice(type_list := as_list(Type), case_sensitive=False),
+    default=random.choice(type_list)
 )
 @click.option(
     "-f", "--flag", "flags",
