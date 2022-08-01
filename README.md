@@ -55,7 +55,7 @@ The category tag will specify which category your joke will be in. Use `jokes ge
 
 > Example: `jokes get -t Single` or `jokes get --type Single`
 >
-> Default: Single
+> Default: Random
 
 Choose the type of joke, either a single oneliner or a two-parter. Use `jokes get --help` to see available types.
 
