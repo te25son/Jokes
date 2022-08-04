@@ -80,12 +80,16 @@ def submit(ctx: Context, category: str, type: str, flags: list[str]) -> None:
         flags={f.lower(): True for f in flags}
     )
 
-    if type == Type.TWOPART.name:
-        joke.setup = click.prompt("Joke setup", type=str)
-        joke.delivery = click.prompt("Joke delivery", type=str)
+    match Type[type]:
+        case Type.TWOPART:
+            joke.setup = click.prompt("Joke setup", type=str)
+            joke.delivery = click.prompt("Joke delivery", type=str)
 
-    elif type == Type.SINGLE.name:
-        joke.joke = click.prompt("Joke", type=str)
+        case Type.SINGLE:
+            joke.joke = click.prompt("Joke", type=str)
+
+        case _:
+            raise click.ClickException(f"Unexpected joke type: {type}.")
 
     click.echo(unsafe_perform_io(unwrap(ctx, submit_joke(joke.__dict__))))
 
