@@ -15,7 +15,7 @@ class TestRequest:
         response = unsafe_perform_io(make_request(data).bind_result(deserialize).unwrap())
 
         assert isinstance(response, Joke)
-        assert response.type == type.name.lower()
+        assert response.type == type.name
 
 
     @staticmethod
@@ -25,7 +25,7 @@ class TestRequest:
         flags: list[Flag] = []
     ) -> OptionData:
         return OptionData(
-            category=category.name.lower(),
-            type=type.name.lower(),
-            flags=[f.name.lower() for f in flags]
+            category=category.name,
+            type=type.name,
+            flags=[f.name for f in flags]
         )
