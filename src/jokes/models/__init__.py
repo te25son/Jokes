@@ -9,6 +9,7 @@ from .joke import (
 )
 from .error import Error
 from .flags import Flags
+from .response import APIResponse
 
 Joke = JokeSingle | JokeTwopart
 JokeE = Joke | Error

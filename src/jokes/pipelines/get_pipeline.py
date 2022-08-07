@@ -5,10 +5,10 @@ from returns.result import safe
 from returns.pipeline import flow
 from returns.pointfree import bind_result
 from jokes.models import (
+    APIResponse,
     JokeBase,
     JokeSingle,
     JokeTwopart,
-    Error,
     Joke,
     JokeE
 )
@@ -47,10 +47,9 @@ def make_request(data: OptionData) -> Response:
 def deserialize(response: Response) -> JokeE:
     """Safely deserializes the API response."""
 
-    response_data: dict = response.json()
-    is_error: bool = response_data["error"]
+    response_data = APIResponse(**response.json())
 
-    return Error(**response_data) if is_error else deserialize_joke(response_data)
+    return response_data.match_error(if_false=deserialize_joke)
 
 
 def deserialize_joke(data: dict) -> Joke:

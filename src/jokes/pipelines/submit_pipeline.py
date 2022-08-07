@@ -4,11 +4,11 @@ from returns.result import safe
 from returns.pipeline import flow
 from returns.pointfree import bind_ioresult, bind_result
 from jokes.models import (
+    APIResponse,
     JokeBase,
     JokeSingleSubmit,
     JokeTwopartSubmit,
     JokeSubmitted,
-    Error,
     SubmitJoke,
     SubmittedJokeE
 )
@@ -61,7 +61,6 @@ def submit_request(data: str) -> Response:
 def deserialize(response: Response) -> SubmittedJokeE:
     """Safely deserializes the API response."""
 
-    response_data = response.json()
-    is_error = response_data["error"]
+    response_data = APIResponse(**response.json())
 
-    return Error(**response_data) if is_error else JokeSubmitted(**response_data)
+    return response_data.match_error(if_false=lambda d: JokeSubmitted(**d))
