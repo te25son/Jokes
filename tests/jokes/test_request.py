@@ -1,5 +1,6 @@
 import pytest
-from jokes.models.joke import Joke
+
+from jokes.models import JokeSingle, JokeTwopart
 from jokes.options import OptionData, Type, Flag, Category
 from jokes.pipelines.get_pipeline import make_request, deserialize
 from returns.unsafe import unsafe_perform_io
@@ -18,11 +19,14 @@ class TestRequest:
         data = self._create_option_data(category, type)
         response = unsafe_perform_io(make_request(data).bind_result(deserialize).unwrap())
 
-        assert isinstance(response, Joke)
-        assert response.type == type.name
-
-        if category != Category.ANY:
-            assert response.category == category.name
+        match type:
+            case Type.SINGLE:
+                assert isinstance(response, JokeSingle)
+                assert response.joke is not None
+            case Type.TWOPART: 
+                assert isinstance(response, JokeTwopart)
+                assert response.setup is not None
+                assert response.delivery is not None
 
 
     @staticmethod

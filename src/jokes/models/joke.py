@@ -1,94 +1,108 @@
-from typing import Callable, Any
-from jokes.options import Type
+from typing import Callable, TypeVar
+from pydantic import BaseModel, validator, fields, Extra
+from jokes.options import as_list, Type, Category
 from jokes.models.flags import Flags
-from pydantic import root_validator, BaseModel, validator
-from returns.maybe import Maybe
 
 
-class Joke(BaseModel):
-    """
-    Base joke class with validation. Also used for
-    deserializing the response of the `get` endpoint.
-    """
+T1 = TypeVar("T1", bound=BaseModel)
+T2 = TypeVar("T2", bound=BaseModel)
+
+
+field_error: Callable[[str, str], str] \
+    = lambda value, field: f"{value} is not a valid {field}."
+
+
+class JokeBase(BaseModel):
+    """Class representing the base fields for all jokes."""
 
     type: str
     category: str
-    setup: str | None = None
-    delivery: str | None = None
-    joke: str | None = None
 
 
-    @validator('type', 'category', pre=True)
+    @validator("type", "category", pre=True)
     def to_upper(cls, value: str) -> str:
-        """Converts the incoming fields to uppercase."""
+        """Converts incoming field values to uppercase."""
 
         return value.upper()
 
 
-    @root_validator()
-    def check_valid_joke(cls, values: dict[Any, str]) -> dict[Any, str]:
-        """Validates that the incoming joke data is valid based on the given type."""
+    @validator("type")
+    def check_type_exists(cls, value: str, field: fields.ModelField) -> str:
+        """Check that the type field contains a valid type."""
 
-        get_value: Callable[[str], str | None] = lambda v: values.get(v)
-
-        type = Type[value] if (value := get_value("type")) else None
-        setup, delivery, joke = get_value("setup"), get_value("delivery"), get_value("joke")
-
-        match type:
-            case Type.TWOPART:
-                assert setup is not None, "Setup field must be included in a twopart joke."
-                assert delivery is not None, "Delivery field must be included in a twopart joke."
-                assert joke is None, "Joke field cannot be included in a twopart joke."
-
-            case Type.SINGLE:
-                assert setup is None, "Setup field cannot be included in a single joke."
-                assert delivery is None, "Delivery field cannot be included in a single joke."
-                assert joke is not None, "Joke field must be included in a single joke."
-
-            case _:
-                raise ValueError(f"Invalid type.")
-
-        return values
+        assert value in as_list(Type), field_error(value, field.name)
+        return value
 
 
-    def get_joke_by_type(self) -> Maybe[str]:
-        """Gets the joke by the type and wraps it in a container."""
+    @validator("category")
+    def check_category_exists(cls, value: str, field: fields.ModelField) -> str:
+        """Check that the category field contains a valid category."""
 
-        safe: Callable[[str | None], Maybe[str]] = lambda v: Maybe.from_optional(v)
+        assert value in as_list(Category), field_error(value, field.name)
+        return value
+
+
+    def match_type(self, single_action: Callable[[dict], T1], twopart_action: Callable[[dict], T2]) -> T1 | T2:
+        """
+        Matches the current type to possible values and calls the given function
+        with the data initially passed to this class.
+        """
 
         match Type[self.type]:
-            case Type.SINGLE:
-                return safe(self.joke)
-
-            case Type.TWOPART:
-                return Maybe.do(
-                    "\n".join([s, d])
-                    for s in safe(self.setup)
-                    for d in safe(self.delivery)
-                )
-
-            case _:
-                return Maybe.empty
+            case Type.SINGLE: return single_action(self.dict())
+            case Type.TWOPART: return twopart_action(self.dict())
+            case _: raise ValueError("Invalid type.")
 
 
-    def as_string(self) -> str:
-        """
-        Unwraps the joke and returns the value or a
-        default message if the joke does not exist.
-        """
-
-        return self.get_joke_by_type().value_or(f"Could not find joke with type: '{self.type}'.")
+    class Config:
+        extra = Extra.allow # Allows extra fields in the class. Necessary for the match_type function.
 
 
-class SubmitJoke(Joke):
-    """Class for creating the data necessary to submit a joke."""
+class JokeSingle(BaseModel):
+    """Class representing the fields necessary for a single type joke."""
+
+    joke: str
+
+
+    def __str__(self) -> str:
+        return self.joke
+
+
+class JokeTwopart(BaseModel):
+    """Class representing the fields necessary for a twopart type joke."""
+
+    setup: str
+    delivery: str
+
+
+    def __str__(self) -> str:
+        return "\n".join([self.setup, self.delivery])
+
+
+class JokeSubmit(JokeBase):
+    """Class representing the fields necessary for submitting a joke to Joke API."""
 
     formatVersion: int = 3
     lang: str = "en"
     flags: Flags
 
 
-class SubmittedJoke(BaseModel):
-    """Class for deserializing the response of a submitted joke."""
+class JokeSingleSubmit(JokeSubmit, JokeSingle):
+    """Class representing the fields necessary for submitting a single type joke to Joke API."""
 
+    pass
+
+
+class JokeTwopartSubmit(JokeSubmit, JokeTwopart):
+    """Class representing the fields necessary for submitting a twopart type joke to Joke API."""
+
+    pass
+
+
+class JokeSubmitted(BaseModel):
+    """Class representing the fields present in the response of a successfully submitted joke."""
     message: str
+
+
+    def __str__(self) -> str:
+        return self.message
