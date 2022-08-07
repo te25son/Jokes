@@ -30,10 +30,6 @@ class Error(BaseModel):
         return get_current_context(silent=True)
 
 
-    def as_string(self) -> str:
-        return str(self)
-
-
     def __str__(self) -> str:
         """Returns a string representation of the error class."""
 

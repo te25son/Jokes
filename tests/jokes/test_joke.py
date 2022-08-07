@@ -104,7 +104,7 @@ class TestJoke:
         assert error.additionalInfo == valid_error_response["additionalInfo"]
         assert error.causedBy == valid_error_response["causedBy"]
         assert error.internalError == valid_error_response["internalError"]
-        assert error.as_string() == "\n".join(valid_error_response["causedBy"])
+        assert str(error) == "\n".join(valid_error_response["causedBy"])
 
 
     def test_error_invalid_data(self):
