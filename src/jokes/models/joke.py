@@ -48,9 +48,11 @@ class JokeBase(BaseModel):
         with the data initially passed to this class.
         """
 
+        data = self.dict()
+
         match Type[self.type]:
-            case Type.SINGLE: return single_action(self.dict())
-            case Type.TWOPART: return twopart_action(self.dict())
+            case Type.SINGLE: return single_action(data)
+            case Type.TWOPART: return twopart_action(data)
             case _: raise ValueError("Invalid type.")
 
 
@@ -101,6 +103,7 @@ class JokeTwopartSubmit(JokeSubmit, JokeTwopart):
 
 class JokeSubmitted(BaseModel):
     """Class representing the fields present in the response of a successfully submitted joke."""
+
     message: str
 
 
