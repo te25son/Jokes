@@ -3,8 +3,15 @@ from returns.io import IOResultE, impure_safe
 from returns.result import safe
 from returns.pipeline import flow
 from returns.pointfree import bind_ioresult, bind_result
-from jokes.models.joke import SubmitJoke, SubmittedJoke
-from jokes.models.error import Error
+from jokes.models import (
+    JokeBase,
+    JokeSingleSubmit,
+    JokeTwopartSubmit,
+    JokeSubmitted,
+    Error,
+    SubmitJoke,
+    SubmittedJokeE
+)
 
 
 def submit_joke(data: dict) -> IOResultE[Response]:
@@ -12,17 +19,28 @@ def submit_joke(data: dict) -> IOResultE[Response]:
 
     return flow(
         data,
-        validate_and_format_joke,
+        serialize,
         bind_ioresult(submit_request),
         bind_result(deserialize)
     )
 
 
 @impure_safe
-def validate_and_format_joke(data: dict) -> str:
-    """Validates and formats the joke into a json object."""
+def serialize(data: dict) -> str:
+    """Serializes the data into a valid json object."""
 
-    return SubmitJoke(**data).json(exclude_none=True)
+    return serliaize_joke(data).json(exclude_none=True)
+
+
+def serliaize_joke(data: dict) -> SubmitJoke:
+    """Serializes the data into its proper joke type."""
+
+    joke = JokeBase(**data)
+
+    return joke.match_type(
+        single_action=lambda d: JokeSingleSubmit(**d),
+        twopart_action=lambda d: JokeTwopartSubmit(**d),
+    )
 
 
 @impure_safe
@@ -40,10 +58,10 @@ def submit_request(data: str) -> Response:
 
 
 @safe
-def deserialize(response: Response) -> SubmittedJoke | Error:
+def deserialize(response: Response) -> SubmittedJokeE:
     """Safely deserializes the API response."""
 
     response_data = response.json()
     is_error = response_data["error"]
 
-    return SubmittedJoke(**response_data) if not is_error else Error(**response_data)
+    return Error(**response_data) if is_error else JokeSubmitted(**response_data)

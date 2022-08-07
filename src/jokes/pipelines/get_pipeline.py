@@ -4,8 +4,14 @@ from returns.io import IOResultE, impure_safe
 from returns.result import safe
 from returns.pipeline import flow
 from returns.pointfree import bind_result
-from jokes.models.joke import Joke
-from jokes.models.error import Error
+from jokes.models import (
+    JokeBase,
+    JokeSingle,
+    JokeTwopart,
+    Error,
+    Joke,
+    JokeE
+)
 
 
 def get_joke(data: OptionData) -> IOResultE[str]:
@@ -38,17 +44,28 @@ def make_request(data: OptionData) -> Response:
 
 
 @safe
-def deserialize(response: Response) -> Joke | Error:
+def deserialize(response: Response) -> JokeE:
     """Safely deserializes the API response."""
 
     response_data: dict = response.json()
     is_error: bool = response_data["error"]
 
-    return Joke(**response_data) if not is_error else Error(**response_data)
+    return Error(**response_data) if is_error else deserialize_joke(response_data)
+
+
+def deserialize_joke(data: dict) -> Joke:
+    """Deserializes the joke into its proper type."""
+
+    joke = JokeBase(**data)
+
+    return joke.match_type(
+        single_action=lambda d: JokeSingle(**d),
+        twopart_action=lambda d: JokeTwopart(**d)
+    )
 
 
 @safe
-def get_content(model: Joke | Error) -> str:
+def get_content(model: JokeE) -> str:
     """Safely gets the content of the deserialized object."""
 
-    return model.as_string()
+    return str(model)
