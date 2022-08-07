@@ -36,7 +36,7 @@ class Error(BaseModel):
         if self.internalError:
             return "An internal JokeAPI error occurred."
 
-        match self.debug:
-            case True: return "\n".join([self.message, *self.causedBy, self.additionalInfo])
-            case False: return "\n".join(self.causedBy)
+        if self.debug:
+            return "\n".join([self.message, *self.causedBy, self.additionalInfo])
 
+        return "\n".join(self.causedBy)
