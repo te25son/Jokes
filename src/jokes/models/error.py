@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from click import get_current_context
-from click.core import Context
 
 
 class Error(BaseModel):
@@ -18,16 +17,7 @@ class Error(BaseModel):
         the thread nor the value exist, returns
         False.
         """
-        return context.obj.get("DEBUG") if (context := self.get_context()) else False
-
-
-    def get_context(self) -> Context | None:
-        """
-        Gets the current thread's context. If no
-        context exists, silently fails and returns
-        None instead.
-        """
-        return get_current_context(silent=True)
+        return context.obj.get("DEBUG") if (context := get_current_context(silent=True)) else False
 
 
     def __str__(self) -> str:

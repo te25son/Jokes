@@ -43,8 +43,13 @@ def jokes(ctx: Context, debug: bool):
     """,
     default=[]
 )
+@click.option(
+    "--safe/--unsafe", "safe",
+    default=False
+)
 @click.pass_context
-def get(ctx: Context, category: str, type: str, flags: list[str]) -> None:
+def get(ctx: Context, category: str, type: str, flags: list[str], safe: bool) -> None:
+    ctx.obj["SAFE_MODE"] = safe
     joke = get_joke(OptionData(category, type, flags))
 
     click.echo(unsafe_perform_io(unwrap(ctx, joke)))
