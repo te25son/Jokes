@@ -69,7 +69,7 @@ The flag option can be used once, multiple times, or not at all. It is used to t
 
 Use `jokes get --help` to see available flags.
 
-## Under Construction
+## Coming Soon(ish)
 
 The ability to submit a joke to the Joke API with this CLI is currently under construction :hammer_and_wrench:. The code has been written but it hasn't been possible to test since the Joke API has temporarily disabled joke submissions at this time.
 
