@@ -37,7 +37,7 @@ def make_request(data: OptionData) -> Response:
     safe_mode = context.obj.get("SAFE_MODE") if (context := get_current_context(silent=True)) else False
     params: dict[str, Primitive] = dict(
         type = data.type,
-        blacklistFlags = "+".join(data.flags),
+        blacklistFlags = "+".join(data.flags)
     )
 
     if safe_mode:
