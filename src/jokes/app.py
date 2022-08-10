@@ -134,4 +134,4 @@ if __name__ == "__main__":
     >>> jokes(args=["submit", "-c", "{category}"])
     """
 
-    jokes(args=["get", "-f", "nsfw", "-f", "religious"])
+    jokes(args=["get"])

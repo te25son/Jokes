@@ -12,7 +12,7 @@ class GetEndpointParams(BaseModel):
     """
     Class representing the query parameters to be included in the get endpoint url.
 
-    Fields containing an "" string will be converted to a query parameter with an empty value, i.e. `?param=`.
+    Fields containing an empty string ("") will be converted to a query parameter with an empty value, i.e. `?param=`.
 
     Fields of type `None` will be converted to a valueless query parameter, i.e.`?param`.
     """
@@ -53,7 +53,7 @@ class SubmitEndpointParams(BaseModel):
     """
     Class representing the query parameters to be included in the submit endpoint url.
 
-    Fields containing an "" string will be converted to a query parameter with an empty value, i.e. `?param=`.
+    Fields containing an empty string ("") will be converted to a query parameter with an empty value, i.e. `?param=`.
 
     Fields of type `None` will be converted to a valueless query parameter, i.e. `?param`.
     """
