@@ -19,10 +19,7 @@ def format_params(params: TParam) -> str:
     return "&".join([k if v is None else f"{k}={v}" for k, v in params.dict().items()])
 
 
-def build_endpoint_url(
-    endpoint: Endpoints,
-    params: TParam
-) -> str:
+def build_endpoint_url(endpoint: Endpoints, params: TParam) -> str:
     """Builds a valid joke api endpoint url."""
 
     category = params.category if isinstance(params, GetEndpointParams) else None
