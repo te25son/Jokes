@@ -1,11 +1,10 @@
 from jokes.options import OptionData
-from click import get_current_context
 from httpx import Response, Client
 from returns.io import IOResultE, impure_safe
 from returns.result import safe
 from returns.pipeline import flow
 from returns.pointfree import bind_result
-from jokes.utils.urls import Primitive, URLBuilder
+from jokes.utils.urls import GetEndpointParams, Endpoints, build_endpoint_url
 from jokes.models import (
     APIResponse,
     JokeBase,
@@ -34,17 +33,14 @@ def make_request(data: OptionData) -> Response:
     Raises an error if the response's status code is not 200
     """
 
-    safe_mode = context.obj.get("SAFE_MODE") if (context := get_current_context(silent=True)) else False
-    params: dict[str, Primitive] = dict(
-        type = data.type,
-        blacklistFlags = "+".join(data.flags),
+    params = GetEndpointParams(
+        category=data.category,
+        type=data.type,
+        blacklistFlags = "+".join(data.flags)
     )
 
-    if safe_mode:
-        params.update({"safe-mode": None})
-
     with Client() as client:
-        response = client.get(URLBuilder.build_get_endpoint(data.category, params))
+        response = client.get(build_endpoint_url(Endpoints.GET, params))
         response.raise_for_status()
 
         return response

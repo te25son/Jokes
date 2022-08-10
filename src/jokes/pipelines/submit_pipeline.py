@@ -3,7 +3,8 @@ from returns.io import IOResultE, impure_safe
 from returns.result import safe
 from returns.pipeline import flow
 from returns.pointfree import bind_ioresult, bind_result
-from jokes.utils.urls import URLBuilder
+from jokes.utils.urls import build_endpoint_url, Endpoints
+from jokes.utils.params import SubmitEndpointParams
 from jokes.models import (
     APIResponse,
     JokeBase,
@@ -51,10 +52,8 @@ def submit_request(data: str) -> Response:
     Raises an error if the response's status code is not 200.
     """
 
-    params = {"dry-run": None}
-
     with Client() as client:
-        response = client.post(URLBuilder.build_submit_endpoint(params), json=data)
+        response = client.post(build_endpoint_url(Endpoints.SUBMIT, SubmitEndpointParams()), json=data)
         response.raise_for_status()
 
         return response

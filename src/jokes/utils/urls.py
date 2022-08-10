@@ -1,10 +1,11 @@
-from typing import Mapping
+from typing import TypeVar
 from enum import Enum
+from jokes.utils.params import GetEndpointParams, SubmitEndpointParams
 
-
-Primitive = str | int | float | bool | None
 
 BASE_URL = "https://v2.jokeapi.dev"
+
+TParam = TypeVar("TParam", GetEndpointParams, SubmitEndpointParams)
 
 
 class Endpoints(Enum):
@@ -12,40 +13,19 @@ class Endpoints(Enum):
     SUBMIT = "submit"
 
 
-class URLBuilder:
-    """Class for building joke api urls."""
+def format_params(params: TParam) -> str:
+    """Formats the params into a string usable by the joke api."""
+
+    return "&".join([k if v is None else f"{k}={v}" for k, v in params.dict().items()])
 
 
-    @classmethod
-    def build_get_endpoint(cls, category: str, params: Mapping[str, Primitive] = None) -> str:
-        """Builds the joke api get endpoint."""
+def build_endpoint_url(
+    endpoint: Endpoints,
+    params: TParam
+) -> str:
+    """Builds a valid joke api endpoint url."""
 
-        return cls._build(Endpoints.GET, category, params)
+    category = params.category if isinstance(params, GetEndpointParams) else None
+    url = "/".join(filter(None, [BASE_URL, endpoint.value, category]))
 
-
-    @classmethod
-    def build_submit_endpoint(cls, params: Mapping[str, Primitive] = None) -> str:
-        """Builds the joke api submit endpoint."""
-
-        return cls._build(Endpoints.SUBMIT, params=params)
-
-
-    @classmethod
-    def _build(
-        cls,
-        endpoint: Endpoints,
-        category: str | None = None,
-        params: Mapping[str, Primitive] = None
-    ) -> str:
-        """Builds a valid joke api endpoint url."""
-
-        url = "/".join(filter(None, [BASE_URL, endpoint.value, category]))
-
-        return f"{url}?{cls._format_params(params)}" if params else url
-
-
-    @staticmethod
-    def _format_params(params: Mapping[str, Primitive]) -> str:
-        """Formats the params into a string usable by the joke api."""
-
-        return "&".join([k if v is None else f"{k}={v}" for k, v in params.items()])
+    return f"{url}?{query_params}" if (query_params := format_params(params)) else url
