@@ -4,6 +4,7 @@ from returns.io import IOResultE, impure_safe
 from returns.result import safe
 from returns.pipeline import flow
 from returns.pointfree import bind_result
+from jokes.utils.urls import GetEndpointParams, Endpoints, build_endpoint_url
 from jokes.models import (
     APIResponse,
     JokeBase,
@@ -32,12 +33,14 @@ def make_request(data: OptionData) -> Response:
     Raises an error if the response's status code is not 200
     """
 
-    params = dict(
-        type = data.type,
+    params = GetEndpointParams(
+        category=data.category,
+        type=data.type,
         blacklistFlags = "+".join(data.flags)
     )
-    with Client(params=params) as client:
-        response = client.get(f"https://v2.jokeapi.dev/joke/{data.category}")
+
+    with Client() as client:
+        response = client.get(build_endpoint_url(Endpoints.GET, params))
         response.raise_for_status()
 
         return response
