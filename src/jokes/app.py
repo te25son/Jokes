@@ -2,7 +2,8 @@ import click
 import random
 
 from types import SimpleNamespace
-from jokes.options import Type, Flag, Category, OptionData, as_list
+from jokes.options import Type, Flag, Category, Language, as_list
+from jokes.utils.params import GetEndpointParams
 from jokes.pipelines.get_pipeline import get_joke
 from jokes.pipelines.submit_pipeline import submit_joke
 from returns.unsafe import unsafe_perform_io
@@ -44,13 +45,25 @@ def jokes(ctx: Context, debug: bool):
     default=[]
 )
 @click.option(
+    "-l", "--lang", "lang",
+    type=click.Choice(as_list(Language), case_sensitive=False),
+    default=Language.EN.name
+)
+@click.option(
     "--safe/--unsafe", "safe",
     default=False
 )
 @click.pass_context
-def get(ctx: Context, category: str, type: str, flags: list[str], safe: bool) -> None:
+def get(ctx: Context, category: str, type: str, flags: tuple[str], lang: str, safe: bool) -> None:
     ctx.obj["SAFE_MODE"] = safe
-    joke = get_joke(OptionData(category, type, flags))
+
+    params = GetEndpointParams(
+        type=type,
+        category=category,
+        lang=lang,
+        blacklist_flags=list(flags)
+    )
+    joke = get_joke(params)
 
     click.echo(unsafe_perform_io(unwrap(ctx, joke)))
 
@@ -121,4 +134,4 @@ if __name__ == "__main__":
     >>> jokes(args=["submit", "-c", "{category}"])
     """
 
-    jokes(args=["get"])
+    jokes(args=["get", "-f", "nsfw", "-f", "religious"])

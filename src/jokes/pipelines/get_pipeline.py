@@ -1,4 +1,3 @@
-from jokes.options import OptionData
 from httpx import Response, Client
 from returns.io import IOResultE, impure_safe
 from returns.result import safe
@@ -15,11 +14,11 @@ from jokes.models import (
 )
 
 
-def get_joke(data: OptionData) -> IOResultE[str]:
+def get_joke(params: GetEndpointParams) -> IOResultE[str]:
     """Flow/Pipeline for safely getting a joke from the JokeAPI"""
 
     return flow(
-        data,
+        params,
         make_request,
         bind_result(deserialize),
         bind_result(get_content)
@@ -27,17 +26,11 @@ def get_joke(data: OptionData) -> IOResultE[str]:
 
 
 @impure_safe
-def make_request(data: OptionData) -> Response:
+def make_request(params: GetEndpointParams) -> Response:
     """
     Makes a GET request to the Joke API /joke endpoint.
     Raises an error if the response's status code is not 200
     """
-
-    params = GetEndpointParams(
-        category=data.category,
-        type=data.type,
-        blacklistFlags = "+".join(data.flags)
-    )
 
     with Client() as client:
         response = client.get(build_endpoint_url(Endpoints.GET, params))
