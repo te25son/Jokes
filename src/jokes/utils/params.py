@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field
 from click import get_current_context
 
 
-
 def filter_items(items: list[str | None]) -> set[str]:
     """Filters none values from given list and returns a set."""
 

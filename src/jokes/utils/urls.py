@@ -14,7 +14,7 @@ class Endpoints(Enum):
     SUBMIT = "submit"
 
 
-def format_params(dict: Mapping[str, Primitive]) -> str:
+def build_query_string(dict: Mapping[str, Primitive]) -> str:
     """Formats the params into a string usable by the joke api."""
 
     return "&".join([k if v is None else f"{k}={v}" for k, v in dict.items()])
@@ -26,4 +26,4 @@ def build_endpoint_url(endpoint: Endpoints, params: TParam) -> str:
     category = params.category if isinstance(params, GetEndpointParams) else None
     url = "/".join(filter(None, [BASE_URL, endpoint.value, category]))
 
-    return f"{url}?{query_params}" if (query_params := format_params(params.dict())) else url
+    return f"{url}?{query_string}" if (query_string := build_query_string(params.dict())) else url
