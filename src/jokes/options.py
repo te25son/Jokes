@@ -1,7 +1,6 @@
 import typing
 
 from enum import Enum, auto
-from dataclasses import dataclass
 
 
 class Category(Enum):
@@ -28,11 +27,13 @@ class Flag(Enum):
     EXPLICIT = auto()
 
 
-@dataclass
-class OptionData:
-    category: str
-    type: str
-    flags: list[str]
+class Language(Enum):
+    CS = auto()
+    DE = auto()
+    EN = auto()
+    ES = auto()
+    FR = auto()
+    PT = auto()
 
 
 def as_list(klass: typing.Type[Enum]) -> list[str]:
