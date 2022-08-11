@@ -63,9 +63,8 @@ def get(ctx: Context, category: str, type: str, flags: tuple[str], lang: str, sa
         lang=lang,
         blacklist_flags=list(flags)
     )
-    joke = get_joke(params)
 
-    click.echo(unsafe_perform_io(unwrap(ctx, joke)))
+    click.echo(unsafe_perform_io(unwrap(ctx, get_joke(params))))
 
 
 # Turned off for now since the api is not allowing submissions at the moment
