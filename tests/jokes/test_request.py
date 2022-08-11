@@ -17,7 +17,7 @@ class TestRequest:
         (Type.TWOPART, Category.PROGRAMMING, [Flag.NSFW, Flag.EXPLICIT], Language.EN),
     ])
     def test_complete_response(self, type: Type, category: Category, flags: list[Flag], lang: Language):
-        data = self._create_option_data(category, type)
+        data = self._create_option_data(category, type, flags, lang)
         response = unsafe_perform_io(make_request(data).bind_result(deserialize).unwrap())
 
         match type:
