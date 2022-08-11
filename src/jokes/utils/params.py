@@ -25,10 +25,10 @@ class GetEndpointParams(BaseModel):
 
 
     @validator("blacklist_flags", pre=True)
-    def format_blacklist_flags(cls, value: str | list[str]) -> str:
-        """Format the incoming blacklist flags into a joined string if there are many."""
+    def format_blacklist_flags(cls, value: list[str]) -> str:
+        """Joins the incoming blacklist flags into a single string."""
 
-        return "+".join(value) if isinstance(value, list) else value
+        return "+".join(value)
 
 
     def dict(self, **kwargs) -> dict[str, str]:

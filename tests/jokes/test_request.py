@@ -8,15 +8,15 @@ from returns.unsafe import unsafe_perform_io
 
 
 class TestRequest:
-    @pytest.mark.parametrize("type, category", [
-        (Type.SINGLE, Category.ANY),
-        (Type.SINGLE, Category.DARK),
-        (Type.SINGLE, Category.PROGRAMMING),
-        (Type.TWOPART, Category.ANY),
-        (Type.TWOPART, Category.DARK),
-        (Type.TWOPART, Category.PROGRAMMING),
+    @pytest.mark.parametrize("type, category, flags, lang", [
+        (Type.SINGLE, Category.ANY, [Flag.NSFW, Flag.EXPLICIT], Language.EN),
+        (Type.SINGLE, Category.DARK, [Flag.NSFW, Flag.EXPLICIT], Language.EN),
+        (Type.SINGLE, Category.PROGRAMMING, [Flag.NSFW, Flag.EXPLICIT], Language.EN),
+        (Type.TWOPART, Category.ANY, [Flag.NSFW, Flag.EXPLICIT], Language.EN),
+        (Type.TWOPART, Category.DARK, [Flag.NSFW, Flag.EXPLICIT], Language.EN),
+        (Type.TWOPART, Category.PROGRAMMING, [Flag.NSFW, Flag.EXPLICIT], Language.EN),
     ])
-    def test_type_option_creates_correct_response(self, type: Type, category: Category):
+    def test_complete_response(self, type: Type, category: Category, flags: list[Flag], lang: Language):
         data = self._create_option_data(category, type)
         response = unsafe_perform_io(make_request(data).bind_result(deserialize).unwrap())
 
@@ -24,6 +24,7 @@ class TestRequest:
             case Type.SINGLE:
                 assert isinstance(response, JokeSingle)
                 assert response.joke is not None
+
             case Type.TWOPART:
                 assert isinstance(response, JokeTwopart)
                 assert response.setup is not None
