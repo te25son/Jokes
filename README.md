@@ -69,6 +69,16 @@ The flag option can be used once, multiple times, or not at all. It is used to t
 
 Use `jokes get --help` to see available flags.
 
+### Lang
+
+> Example: `jokes get -l fr` or `jokes get --lang fr`
+>
+> Default: EN (English)
+
+Choose the language you want your joke to be in. Choice must be in the [ISO 639-1 format](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). Current supported languages are English, French, Portuguese, Czech, Spanish, and German.
+
+Note that the option does not translate the jokes but filters jokes that have been submitted in the desired language.
+
 ## Coming Soon(ish)
 
 The ability to submit a joke to the Joke API with this CLI is currently under construction :hammer_and_wrench:. The code has been written but it hasn't been possible to test since the Joke API has temporarily disabled joke submissions at this time.
