@@ -79,6 +79,14 @@ Choose the language you want your joke to be in. Choice must be in the [ISO 639-
 
 Note that the option does not translate the jokes but filters jokes that have been submitted in the desired language.
 
+### Safe Mode
+
+> Example: `jokes get --safe` or `jokes get --unsafe`
+>
+> Default: unsafe
+
+If you use the safe option, the API will attempt to filter out any offensive, dark, or insulting jokes. Be warned that some gutter humor may work its way through the filtering, but it's unlikely.
+
 ## Coming Soon(ish)
 
 The ability to submit a joke to the Joke API with this CLI is currently under construction :hammer_and_wrench:. The code has been written but it hasn't been possible to test since the Joke API has temporarily disabled joke submissions at this time.
