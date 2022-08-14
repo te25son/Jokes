@@ -43,6 +43,3 @@ class TestUrls:
         url = build_endpoint_url(Endpoints.SUBMIT, SubmitEndpointParams())
 
         assert url == f"{BASE_URL}/submit"
-
-
-        
