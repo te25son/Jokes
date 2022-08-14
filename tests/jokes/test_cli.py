@@ -5,6 +5,9 @@ from jokes.app import jokes
 
 
 class TestCLI:
+    """Tests for the CLI commands."""
+
+
     @pytest.fixture(autouse=True)
     def set_common_fixtures(self, runner: CliRunner):
         self.runner = runner
@@ -18,91 +21,135 @@ class TestCLI:
 
 
     def test_non_existing_options(self):
-        self._assert_exception(self._invoke_get("-d", "nothing"))
+        """Tests that invalid arguments throw an exception."""
+
+        self.assert_exception(self.invoke_get(["-d", "nothing"]))
 
 
-    @pytest.mark.parametrize("arg, value", [
-        ("-t", "single"),
-        ("--type", "single"),
-        ("-t", "twopart"),
-        ("--type", "twopart")
+    def test_no_options(self):
+        """Tests that the CLI works when no options are given."""
+
+        self.assert_success(self.invoke_get())
+
+
+    def test_all_options_together(self):
+        """Tests all options together do not throw an exception."""
+
+        self.assert_success(self.invoke_get([
+            "-t", "TWOPART",
+            "-c", "MISC",
+            "-l", "FR",
+            "-f" "NSFW",
+            "--safe"
+        ]))
+
+
+    @pytest.mark.parametrize("arg, value, is_success", [
+        ("-t", "single", True),
+        ("--type", "single", True),
+        ("-t", "twopart", True),
+        ("--type", "twopart", True),
+        ("-t", "random", False),
+        ("--type", "nonexistent", False)
     ])
-    def test_valid_type_options(self, arg: str, value: str):
-        self._assert_successful(self._invoke_get(arg, value))
+    def test_type_options(self, arg: str, value: str, is_success: bool):
+        """Tests valid and invalid type options."""
+
+        self.assert_get_result([arg, value], is_success)
 
 
-    @pytest.mark.parametrize("arg, value", [
-        ("-t", "random"),
-        ("--type", "nonexistent")
+    @pytest.mark.parametrize("arg, value, is_success", [
+        ("-c", "any", True),
+        ("--category", "any", True),
+        ("-c", "misc", True),
+        ("--category", "misc", True),
+        ("-c", "programming", True),
+        ("--category", "programming", True),
+        ("-c", "dark", True),
+        ("--category", "dark", True),
+        ("-c", "pun", True),
+        ("--category", "pun", True),
+        ("-c", "spooky", True),
+        ("--category", "spooky", True),
+        ("-c", "christmas", True),
+        ("--category", "christmas", True),
+        ("-c", "random", False),
+        ("--category", "nonexistent", False)
     ])
-    def test_invalid_type_options(self, arg: str, value: str):
-        self._assert_exception(self._invoke_get(arg, value))
+    def test_category_options(self, arg: str, value: str, is_success: bool):
+        """Tests valid and invalid category options."""
+
+        self.assert_get_result([arg, value], is_success)
 
 
-    @pytest.mark.parametrize("arg, value", [
-        ("-c", "any"),
-        ("--category", "any"),
-        ("-c", "misc"),
-        ("--category", "misc"),
-        ("-c", "programming"),
-        ("--category", "programming"),
-        ("-c", "dark"),
-        ("--category", "dark"),
-        ("-c", "pun"),
-        ("--category", "pun"),
-        ("-c", "spooky"),
-        ("--category", "spooky"),
-        ("-c", "christmas"),
-        ("--category", "christmas")
+    @pytest.mark.parametrize("arg, value, is_success", [
+        ("-f", "nsfw", True),
+        ("--flag", "nsfw", True),
+        ("-f", "religious", True),
+        ("--flag", "religious", True),
+        ("-f", "political", True),
+        ("--flag", "political", True),
+        ("-f", "racist", True),
+        ("--flag", "racist", True),
+        ("-f", "sexist", True),
+        ("--flag", "sexist", True),
+        ("-f", "explicit", True),
+        ("--flag", "explicit", True),
+        ("-f", "random", False),
+        ("--flag", "nonexistent", False)
     ])
-    def test_valid_category_options(self, arg: str, value: str):
-        self._assert_successful(self._invoke_get(arg, value))
+    def test_flag_options(self, arg: str, value: str, is_success: bool):
+        """Tests valid and invalid flag options."""
 
+        self.assert_get_result([arg, value], is_success)
 
-    @pytest.mark.parametrize("arg, value", [
-        ("-c", "random"),
-        ("--category", "nonexistent")
+    @pytest.mark.parametrize("arg, value, is_success", [
+        ("-l", "en", True),
+        ("--lang", "en", True),
+        ("-l", "fr", True),
+        ("--lang", "fr", True),
+        ("-l", "pt", True),
+        ("--lang", "pt", True),
+        ("-l", "es", True),
+        ("--lang", "es", True),
+        ("-l", "de", True),
+        ("--lang", "de", True),
+        ("-l", "cs", True),
+        ("--lang", "cs", True),
+        ("-l", "invalid", False),
+        ("--lang", "invalid", False),
     ])
-    def test_invalid_category_options(self, arg: str, value: str):
-        self._assert_exception(self._invoke_get(arg, value))
+    def test_language_options(self, arg: str, value: str, is_success: bool):
+        """Tests valid and invalid language options."""
+
+        self.assert_get_result([arg, value], is_success)
 
 
-    @pytest.mark.parametrize("arg, value", [
-        ("-f", "nsfw"),
-        ("--flag", "nsfw"),
-        ("-f", "religious"),
-        ("--flag", "religious"),
-        ("-f", "political"),
-        ("--flag", "political"),
-        ("-f", "racist"),
-        ("--flag", "racist"),
-        ("-f", "sexist"),
-        ("--flag", "sexist"),
-        ("-f", "explicit"),
-        ("--flag", "explicit")
-    ])
-    def test_valid_flag_options(self, arg: str, value: str):
-        self._assert_successful(self._invoke_get(arg, value))
+    def assert_get_result(self, args: list[str], is_success: bool):
+        """
+        Uses the parameters to get a result and calls a particul function
+        based on whether the result is meant to be a success or throw an exception.
+        """
+
+        assertion = self.assert_success if is_success else self.assert_exception
+
+        return assertion(self.invoke_get(args))
 
 
-    @pytest.mark.parametrize("arg, value", [
-        ("-f", "random"),
-        ("--flag", "nonexistent")
-    ])
-    def test_invalid_flag_options(self, arg: str, value: str):
-        self._assert_exception(self._invoke_get(arg, value))
+    def invoke_get(self, args: list[str] = []) -> Result:
+        """Invokes the get command with the given arguments and returns the result."""
+
+        return self.runner.invoke(jokes, ["get", *args])
 
 
-    def _invoke_get(self, arg: str, value: str) -> Result:
-        return self.runner.invoke(jokes, ["get", arg, value])
+    def assert_success(self, result: Result) -> None:
+        """Checks that the result did not throw an exception."""
 
-
-    def _assert_successful(self, result: Result) -> None:
         assert result.exception is None
         assert result.output is not None
 
 
-    def _assert_exception(self, result: Result) -> None:
-        assert result.exception is not None
+    def assert_exception(self, result: Result) -> None:
+        """Checks that the result threw an exception."""
 
-    
+        assert result.exception is not None
