@@ -25,6 +25,7 @@ black = "^22.10.0"
 pytest-cov = "^4.0.0"
 isort = "^5.10.1"
 flake8 = "^5.0.4"
+pydantic-factories = "^1.13.0"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
@@ -35,7 +36,7 @@ source = ["jokes"]
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 100
+fail_under = 85
 exclude_lines = ["if TYPE_CHECKING:"]
 
 [tool.isort]

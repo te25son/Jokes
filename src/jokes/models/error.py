@@ -1,6 +1,8 @@
 from click import get_current_context
 from pydantic import BaseModel
 
+INTERNAL_JOKE_API_ERROR = "An internal JokeAPI error occurred."
+
 
 class Error(BaseModel):
     internalError: bool
@@ -17,7 +19,7 @@ class Error(BaseModel):
         False.
         """
         return (
-            context.obj.get("DEBUG")
+            context.obj.get("DEBUG", False)
             if (context := get_current_context(silent=True))
             else False
         )
@@ -26,9 +28,9 @@ class Error(BaseModel):
         """Returns a string representation of the error class."""
 
         if self.internalError:
-            return "An internal JokeAPI error occurred."
+            return INTERNAL_JOKE_API_ERROR
 
         if self.debug:
-            return "\n".join([self.message, *self.causedBy, self.additionalInfo])
+            return "\n".join([self.message, self.additionalInfo] + self.causedBy)
 
         return "\n".join(self.causedBy)

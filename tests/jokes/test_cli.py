@@ -1,5 +1,6 @@
 from click.testing import CliRunner, Result
 import pytest
+from pytest_httpx import HTTPXMock
 
 from jokes.app import jokes
 
@@ -8,8 +9,9 @@ class TestCLI:
     """Tests for the CLI commands."""
 
     @pytest.fixture(autouse=True)
-    def set_common_fixtures(self, runner: CliRunner):
+    def set_common_fixtures(self, runner: CliRunner, httpx_mock: HTTPXMock):
         self.runner = runner
+        self.mocker = httpx_mock
 
     def test_basic_cli_command(self):
         result = self.runner.invoke(jokes)
@@ -25,11 +27,13 @@ class TestCLI:
     def test_no_options(self):
         """Tests that the CLI works when no options are given."""
 
+        self.mocker.add_response()
         self.assert_success(self.invoke_get())
 
     def test_all_options_together(self):
         """Tests all options together do not throw an exception."""
 
+        self.mocker.add_response()
         self.assert_success(
             self.invoke_get(
                 ["-t", "TWOPART", "-c", "MISC", "-l", "FR", "-f" "NSFW", "--safe"]
@@ -131,6 +135,8 @@ class TestCLI:
         Uses the parameters to get a result and calls a particul function
         based on whether the result is meant to be a success or throw an exception.
         """
+        if is_success:
+            self.mocker.add_response()
 
         assertion = self.assert_success if is_success else self.assert_exception
 
