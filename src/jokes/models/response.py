@@ -1,7 +1,8 @@
-from pydantic import BaseModel, Extra
-from typing import TypeVar, Callable
-from jokes.models import Error
+from typing import Callable, TypeVar
 
+from pydantic import BaseModel, Extra
+
+from jokes.models import Error
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -10,7 +11,6 @@ class APIResponse(BaseModel):
     """Class representing the primary fields of all responses from Joke API."""
 
     error: bool
-
 
     def match_error(
         self,
@@ -23,7 +23,6 @@ class APIResponse(BaseModel):
         data = self.dict()
 
         return if_true(data) if self.error else if_false(data)
-
 
     class Config:
         extra = Extra.allow

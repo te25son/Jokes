@@ -1,7 +1,7 @@
-from typing import Mapping
 from enum import Enum
-from jokes.utils.params import GetEndpointParams, SubmitEndpointParams
+from typing import Mapping
 
+from jokes.utils.params import GetEndpointParams, SubmitEndpointParams
 
 BASE_URL = "https://v2.jokeapi.dev"
 
@@ -26,4 +26,8 @@ def build_endpoint_url(endpoint: Endpoints, params: TParam) -> str:
     category = params.category if isinstance(params, GetEndpointParams) else None
     url = "/".join(filter(None, [BASE_URL, endpoint.value, category]))
 
-    return f"{url}?{query_string}" if (query_string := build_query_string(params.dict())) else url
+    return (
+        f"{url}?{query_string}"
+        if (query_string := build_query_string(params.dict()))
+        else url
+    )

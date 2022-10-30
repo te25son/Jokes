@@ -1,6 +1,5 @@
-import typing
-
 from enum import Enum, auto
+import typing
 
 
 class Category(Enum):

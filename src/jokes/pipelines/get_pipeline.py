@@ -1,27 +1,25 @@
-from httpx import Response, Client
+from httpx import Client, Response
 from returns.io import IOResultE, impure_safe
-from returns.result import safe
 from returns.pipeline import flow
 from returns.pointfree import bind_result
-from jokes.utils.urls import GetEndpointParams, Endpoints, build_endpoint_url
+from returns.result import safe
+
 from jokes.models import (
     APIResponse,
+    Joke,
     JokeBase,
+    JokeE,
     JokeSingle,
     JokeTwopart,
-    Joke,
-    JokeE
 )
+from jokes.utils.urls import Endpoints, GetEndpointParams, build_endpoint_url
 
 
 def get_joke(params: GetEndpointParams) -> IOResultE[str]:
     """Flow/Pipeline for safely getting a joke from the JokeAPI"""
 
     return flow(
-        params,
-        make_request,
-        bind_result(deserialize),
-        bind_result(get_content)
+        params, make_request, bind_result(deserialize), bind_result(get_content)
     )
 
 
@@ -55,7 +53,7 @@ def deserialize_joke(data: dict) -> Joke:
 
     return joke.match_type(
         single_action=lambda d: JokeSingle(**d),
-        twopart_action=lambda d: JokeTwopart(**d)
+        twopart_action=lambda d: JokeTwopart(**d),
     )
 
 

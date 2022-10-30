@@ -1,30 +1,27 @@
-import pytest
 import string
+from types import SimpleNamespace
 import typing
 
-from types import SimpleNamespace
 from pydantic import ValidationError
-from jokes.options import Category, Type
-from jokes.models import (
-    JokeBase,
-    JokeSubmit,
-    JokeSingle,
-    JokeTwopart,
-    JokeSingleSubmit,
-    JokeTwopartSubmit,
-    JokeSubmitted,
-    Error
-)
+import pytest
 
+from jokes.models import (
+    Error,
+    JokeBase,
+    JokeSingle,
+    JokeSingleSubmit,
+    JokeSubmit,
+    JokeSubmitted,
+    JokeTwopart,
+    JokeTwopartSubmit,
+)
+from jokes.options import Category, Type
 
 
 class TestJoke:
     @pytest.fixture
     def simple_joke_data(self) -> SimpleNamespace:
-        return SimpleNamespace(
-            type=Type.SINGLE.name,
-            category=Category.DARK.name
-        )
+        return SimpleNamespace(type=Type.SINGLE.name, category=Category.DARK.name)
 
     @pytest.fixture
     def valid_single_joke_get_response(self) -> dict[str, typing.Any]:
@@ -39,10 +36,9 @@ class TestJoke:
                 "political": False,
                 "racist": False,
                 "sexist": False,
-                "explicit": False
-            }
+                "explicit": False,
+            },
         }
-
 
     @pytest.fixture
     def valid_twopart_joke_get_response(self) -> dict[str, typing.Any]:
@@ -58,36 +54,38 @@ class TestJoke:
                 "political": False,
                 "racist": False,
                 "sexist": False,
-                "explicit": False
-            }
+                "explicit": False,
+            },
         }
-
 
     @pytest.fixture
     def valid_error_response(self) -> dict[str, typing.Any]:
         return {
-            'error': True,
-            'internalError': False,
-            'message': 'No matching joke found',
-            'causedBy': ['No jokes were found that match your provided filter(s)'],
-            'additionalInfo': 'The specified ID range was out of boungs.'
+            "error": True,
+            "internalError": False,
+            "message": "No matching joke found",
+            "causedBy": ["No jokes were found that match your provided filter(s)"],
+            "additionalInfo": "The specified ID range was out of boungs.",
         }
 
-
-    def test_joke_base_includes_all_data(self, valid_single_joke_get_response: dict[str, typing.Any]):
+    def test_joke_base_includes_all_data(
+        self, valid_single_joke_get_response: dict[str, typing.Any]
+    ):
         joke = JokeBase(**valid_single_joke_get_response)
 
         assert joke.dict() == valid_single_joke_get_response
 
-
-    def test_single_joke_success(self, valid_single_joke_get_response: dict[str, typing.Any]):
+    def test_single_joke_success(
+        self, valid_single_joke_get_response: dict[str, typing.Any]
+    ):
         joke = JokeSingle(**valid_single_joke_get_response)
 
         assert joke.joke == valid_single_joke_get_response["joke"]
         assert str(joke) == valid_single_joke_get_response["joke"]
 
-
-    def test_twopart_joke_success(self, valid_twopart_joke_get_response: dict[str, typing.Any]):
+    def test_twopart_joke_success(
+        self, valid_twopart_joke_get_response: dict[str, typing.Any]
+    ):
         joke = JokeTwopart(**valid_twopart_joke_get_response)
         setup = valid_twopart_joke_get_response["setup"]
         delivery = valid_twopart_joke_get_response["delivery"]
@@ -95,7 +93,6 @@ class TestJoke:
         assert joke.delivery == delivery
         assert joke.setup == setup
         assert str(joke) == "\n".join([setup, delivery])
-
 
     def test_error_success(self, valid_error_response: dict[str, typing.Any]):
         error = Error(**valid_error_response)
@@ -106,44 +103,48 @@ class TestJoke:
         assert error.internalError == valid_error_response["internalError"]
         assert str(error) == "\n".join(valid_error_response["causedBy"])
 
-
     def test_error_invalid_data(self):
-        with pytest.raises(ValidationError) as ex:
+        with pytest.raises(ValidationError):
             Error(**{})
 
-
-    @pytest.mark.parametrize("joke_class", [
-        JokeSingle,
-        JokeTwopart,
-        JokeBase,
-        JokeSingleSubmit,
-        JokeTwopartSubmit,
-        JokeSubmitted,
-        JokeSubmit
-    ])
+    @pytest.mark.parametrize(
+        "joke_class",
+        [
+            JokeSingle,
+            JokeTwopart,
+            JokeBase,
+            JokeSingleSubmit,
+            JokeTwopartSubmit,
+            JokeSubmitted,
+            JokeSubmit,
+        ],
+    )
     def test_joke_invalid_data(self, joke_class: typing.Type):
         with pytest.raises(ValidationError):
             joke_class(**{})
 
-
     @pytest.mark.parametrize("joke_class", [JokeTwopart, JokeTwopartSubmit])
-    def test_cannot_create_twopart_joke_without_setup_and_delivery(self, joke_class: typing.Type, simple_joke_data: SimpleNamespace):
+    def test_cannot_create_twopart_joke_without_setup_and_delivery(
+        self, joke_class: typing.Type, simple_joke_data: SimpleNamespace
+    ):
         simple_joke_data.type = Type.TWOPART.name
 
         with pytest.raises(ValidationError):
             joke_class(**simple_joke_data.__dict__)
 
-
     @pytest.mark.parametrize("joke_class", [JokeTwopart, JokeTwopartSubmit])
-    def test_cannot_create_twopart_joke_with_setup_but_no_delivery(self, joke_class: typing.Type, simple_joke_data: SimpleNamespace):
+    def test_cannot_create_twopart_joke_with_setup_but_no_delivery(
+        self, joke_class: typing.Type, simple_joke_data: SimpleNamespace
+    ):
         simple_joke_data.type = Type.TWOPART.name
         simple_joke_data.setup = string.ascii_letters
 
         with pytest.raises(ValidationError):
             joke_class(**simple_joke_data.__dict__)
 
-
     @pytest.mark.parametrize("joke_class", [JokeSingle, JokeSingleSubmit])
-    def test_cannot_create_single_joke_without_joke_field(self, joke_class: typing.Type, simple_joke_data: SimpleNamespace):
+    def test_cannot_create_single_joke_without_joke_field(
+        self, joke_class: typing.Type, simple_joke_data: SimpleNamespace
+    ):
         with pytest.raises(ValidationError):
             joke_class(**simple_joke_data.__dict__)

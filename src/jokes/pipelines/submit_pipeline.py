@@ -1,29 +1,27 @@
-from httpx import Response, Client
+from httpx import Client, Response
 from returns.io import IOResultE, impure_safe
-from returns.result import safe
 from returns.pipeline import flow
 from returns.pointfree import bind_ioresult, bind_result
-from jokes.utils.urls import build_endpoint_url, Endpoints
-from jokes.utils.params import SubmitEndpointParams
+from returns.result import safe
+
 from jokes.models import (
     APIResponse,
     JokeBase,
     JokeSingleSubmit,
-    JokeTwopartSubmit,
     JokeSubmitted,
+    JokeTwopartSubmit,
     SubmitJoke,
-    SubmittedJokeE
+    SubmittedJokeE,
 )
+from jokes.utils.params import SubmitEndpointParams
+from jokes.utils.urls import Endpoints, build_endpoint_url
 
 
 def submit_joke(data: dict) -> IOResultE[Response]:
     """Flow/Pipeline for safely submitting a joke to the JokeAPI"""
 
     return flow(
-        data,
-        serialize,
-        bind_ioresult(submit_request),
-        bind_result(deserialize)
+        data, serialize, bind_ioresult(submit_request), bind_result(deserialize)
     )
 
 
@@ -53,7 +51,9 @@ def submit_request(data: str) -> Response:
     """
 
     with Client() as client:
-        response = client.post(build_endpoint_url(Endpoints.SUBMIT, SubmitEndpointParams()), json=data)
+        response = client.post(
+            build_endpoint_url(Endpoints.SUBMIT, SubmitEndpointParams()), json=data
+        )
         response.raise_for_status()
 
         return response

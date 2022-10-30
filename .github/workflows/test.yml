@@ -22,16 +22,16 @@ jobs:
       with:
         python-version: "3.10"
     
-    - name: Install and configure Poetry
+    - name: Install & Configure Poetry
       uses: snok/install-poetry@v1
       with:
-        version: 1.1.13
-        virtualenvs-create: true
+        version: 1.2.1
+        virtualenvs-create: false
         virtualenvs-in-project: false
     
-    - name: Install dependencies
-      run: poetry install --no-dev
+    - name: Install Dev Dependencies
+      run: poetry install --only dev
     
-    - name: Test with pytest
+    - name: Test & Lint
       run: |
-        poetry run pytest tests/
+        poetry run nox -rs tests lint
