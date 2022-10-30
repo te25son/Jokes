@@ -26,20 +26,12 @@ jobs:
       uses: snok/install-poetry@v1
       with:
         version: 1.2.1
-        virtualenvs-create: true
+        virtualenvs-create: false
         virtualenvs-in-project: false
     
-    - name: Install dependencies
-      run: poetry install
-
-    - name: Clean
-      run: |
-        poetry run nox -rt clean
-
-    - name: Lint
-      run: |
-        poetry run nox -rs lint
+    - name: Install nox
+      run: poetry install nox
     
-    - name: Test
+    - name: Test & Lint
       run: |
-        poetry run nox -rs tests
+        poetry run nox -rs tests lint
