@@ -30,7 +30,7 @@ jobs:
         virtualenvs-in-project: false
     
     - name: Install Dev Dependencies
-      run: poetry install --dev-only
+      run: poetry install --only dev
     
     - name: Test & Lint
       run: |
