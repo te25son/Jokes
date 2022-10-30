@@ -1,5 +1,5 @@
-from pydantic import BaseModel
 from click import get_current_context
+from pydantic import BaseModel
 
 
 class Error(BaseModel):
@@ -7,7 +7,6 @@ class Error(BaseModel):
     message: str
     causedBy: list[str]
     additionalInfo: str
-
 
     @property
     def debug(self) -> bool:
@@ -17,8 +16,11 @@ class Error(BaseModel):
         the thread nor the value exist, returns
         False.
         """
-        return context.obj.get("DEBUG") if (context := get_current_context(silent=True)) else False
-
+        return (
+            context.obj.get("DEBUG")
+            if (context := get_current_context(silent=True))
+            else False
+        )
 
     def __str__(self) -> str:
         """Returns a string representation of the error class."""

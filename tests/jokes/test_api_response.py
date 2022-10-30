@@ -1,8 +1,9 @@
-import pytest
 import typing
 
-from jokes.options import Category, Type
+import pytest
+
 from jokes.models import APIResponse
+from jokes.options import Category, Type
 
 
 class TestApiResponse:
@@ -19,10 +20,9 @@ class TestApiResponse:
                 "political": False,
                 "racist": False,
                 "sexist": False,
-                "explicit": False
-            }
+                "explicit": False,
+            },
         }
-
 
     def test_api_response_includes_all_data(self, valid_data: dict[str, typing.Any]):
         response = APIResponse(**valid_data)

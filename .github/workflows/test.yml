@@ -30,8 +30,16 @@ jobs:
         virtualenvs-in-project: false
     
     - name: Install dependencies
-      run: poetry install --no-dev
-    
-    - name: Test with pytest
+      run: poetry install
+
+    - name: Clean
       run: |
-        poetry run pytest tests/
+        poetry run nox -rt clean
+
+    - name: Lint
+      run: |
+        poetry run nox -rs lint
+    
+    - name: Test
+      run: |
+        poetry run nox -rs tests

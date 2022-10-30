@@ -1,14 +1,14 @@
+from .error import Error
+from .flags import Flags
 from .joke import (
     JokeBase,
     JokeSingle,
-    JokeTwopart,
-    JokeSubmit,
     JokeSingleSubmit,
+    JokeSubmit,
+    JokeSubmitted,
+    JokeTwopart,
     JokeTwopartSubmit,
-    JokeSubmitted
 )
-from .error import Error
-from .flags import Flags
 from .response import APIResponse
 
 Joke = JokeSingle | JokeTwopart

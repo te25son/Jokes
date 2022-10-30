@@ -1,2 +1,6 @@
 __pycache__/
 .pytest_cache/
+.nox/
+.mypy_cache/
+.vscode/
+.coverage
