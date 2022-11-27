@@ -4,16 +4,13 @@ from pydantic import BaseModel, Field, validator
 
 def filter_items(items: list[str | None]) -> set[str]:
     """Filters none values from given list and returns a set."""
-
     return set(filter(None, items))
 
 
 class GetEndpointParams(BaseModel):
     """
     Class representing the query parameters to be included in the get endpoint url.
-
     Fields containing an empty string ("") will be converted to a query parameter with an empty value, i.e. `?param=`.
-
     Fields of type `None` will be converted to a valueless query parameter, i.e.`?param`.
     """
 
@@ -29,9 +26,10 @@ class GetEndpointParams(BaseModel):
 
         return "+".join(value)
 
-    def dict(self, **kwargs) -> dict[str, str]:
-        """Converts fields to a dict that can be converted to a valid url."""
-
+    def to_filtered_dict(self) -> dict[str, str]:
+        """
+        Filters out the empty optional values and returns the model as a dictionary.
+        """
         safe_mode = (
             context.obj.get("SAFE_MODE")
             if (context := get_current_context(silent=True))
@@ -46,31 +44,8 @@ class GetEndpointParams(BaseModel):
             ]
         )
 
-        return super().dict(by_alias=True, include=included_fields, **kwargs)
+        return super().dict(by_alias=True, include=included_fields)
 
     class Config:
         allow_population_by_field_name = True
-
-
-class SubmitEndpointParams(BaseModel):
-    """
-    Class representing the query parameters to be included in the submit endpoint url.
-
-    Fields containing an empty string ("") will be converted to a query parameter with an empty value, i.e. `?param=`.
-
-    Fields of type `None` will be converted to a valueless query parameter, i.e. `?param`.
-    """
-
-    dry_run: str | None = Field(default=None, alias="dry-run")
-
-    def dict(self, **kwargs) -> dict[str, str]:
-        """Converts fields to a dict that can be converted to a valid url."""
-
-        dry_run = (
-            context.obj.get("TEST")
-            if (context := get_current_context(silent=True))
-            else False
-        )
-        included_fields = filter_items(["dry_run" if dry_run else None])
-
-        return super().dict(by_alias=True, include=included_fields, **kwargs)
+        validate_assignment = True

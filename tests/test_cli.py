@@ -4,6 +4,8 @@ from pytest_httpx import HTTPXMock
 
 from jokes.app import jokes
 
+from .factories import build_single_joke_response
+
 
 class TestCLI:
     """Tests for the CLI commands."""
@@ -27,13 +29,17 @@ class TestCLI:
     def test_no_options(self):
         """Tests that the CLI works when no options are given."""
 
-        self.mocker.add_response()
+        self.mocker.add_response(
+            json=build_single_joke_response().dict(exclude_none=True)
+        )
         self.assert_success(self.invoke_get())
 
     def test_all_options_together(self):
         """Tests all options together do not throw an exception."""
 
-        self.mocker.add_response()
+        self.mocker.add_response(
+            json=build_single_joke_response().dict(exclude_none=True)
+        )
         self.assert_success(
             self.invoke_get(
                 ["-t", "TWOPART", "-c", "MISC", "-l", "FR", "-f" "NSFW", "--safe"]
@@ -136,7 +142,9 @@ class TestCLI:
         based on whether the result is meant to be a success or throw an exception.
         """
         if is_success:
-            self.mocker.add_response()
+            self.mocker.add_response(
+                json=build_single_joke_response().dict(exclude_none=True)
+            )
 
         assertion = self.assert_success if is_success else self.assert_exception
 
