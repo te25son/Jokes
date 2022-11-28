@@ -89,7 +89,7 @@ If you use the safe option, the API will attempt to filter out any offensive, da
 
 ## Coming Soon(ish)
 
-The ability to submit a joke to the Joke API with this CLI is currently under construction :hammer_and_wrench:. The code has been written but it hasn't been possible to test since the Joke API has temporarily disabled joke submissions at this time.
+~~The ability to submit a joke to the Joke API with this CLI is currently under construction :hammer_and_wrench:. The code has been written but it hasn't been possible to test since the Joke API has temporarily disabled joke submissions at this time.~~
 
 ## Development
 
