@@ -52,13 +52,9 @@ def jokes(ctx: Context, debug: bool):
 )
 @click.option("--safe/--unsafe", "safe", default=False)
 @click.pass_context
-def get(
-    ctx: Context, category: str, type: str, flags: tuple[str], lang: str, safe: bool
-) -> None:
+def get(ctx: Context, category: str, type: str, flags: tuple[str], lang: str, safe: bool) -> None:
     ctx.obj["SAFE_MODE"] = safe
 
-    params = GetEndpointParams(
-        type=type, category=category, lang=lang, blacklist_flags=list(flags)
-    )
+    params = GetEndpointParams(type=type, category=category, lang=lang, blacklist_flags=list(flags))
 
     click.echo(get_joke(params))

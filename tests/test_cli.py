@@ -29,22 +29,14 @@ class TestCLI:
     def test_no_options(self):
         """Tests that the CLI works when no options are given."""
 
-        self.mocker.add_response(
-            json=build_single_joke_response().dict(exclude_none=True)
-        )
+        self.mocker.add_response(json=build_single_joke_response().dict(exclude_none=True))
         self.assert_success(self.invoke_get())
 
     def test_all_options_together(self):
         """Tests all options together do not throw an exception."""
 
-        self.mocker.add_response(
-            json=build_single_joke_response().dict(exclude_none=True)
-        )
-        self.assert_success(
-            self.invoke_get(
-                ["-t", "TWOPART", "-c", "MISC", "-l", "FR", "-f" "NSFW", "--safe"]
-            )
-        )
+        self.mocker.add_response(json=build_single_joke_response().dict(exclude_none=True))
+        self.assert_success(self.invoke_get(["-t", "TWOPART", "-c", "MISC", "-l", "FR", "-f" "NSFW", "--safe"]))
 
     @pytest.mark.parametrize(
         "arg, value, is_success",
@@ -142,9 +134,7 @@ class TestCLI:
         based on whether the result is meant to be a success or throw an exception.
         """
         if is_success:
-            self.mocker.add_response(
-                json=build_single_joke_response().dict(exclude_none=True)
-            )
+            self.mocker.add_response(json=build_single_joke_response().dict(exclude_none=True))
 
         assertion = self.assert_success if is_success else self.assert_exception
 
