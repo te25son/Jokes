@@ -30,11 +30,7 @@ class GetEndpointParams(BaseModel):
         """
         Filters out the empty optional values and returns the model as a dictionary.
         """
-        safe_mode = (
-            context.obj.get("SAFE_MODE")
-            if (context := get_current_context(silent=True))
-            else False
-        )
+        safe_mode = context.obj.get("SAFE_MODE") if (context := get_current_context(silent=True)) else False
         included_fields = filter_items(
             [
                 "type",

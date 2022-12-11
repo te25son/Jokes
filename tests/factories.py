@@ -41,9 +41,7 @@ class GetEndpointParamsFactory(ModelFactory):
 
 
 def build_single_joke_response() -> JokesResponse:
-    return JokeResponseFactory.build(
-        error=False, type=Types.SINGLE.value, setup=None, delivery=None
-    )
+    return JokeResponseFactory.build(error=False, type=Types.SINGLE.value, setup=None, delivery=None)
 
 
 def build_twopart_joke_response() -> JokesResponse:

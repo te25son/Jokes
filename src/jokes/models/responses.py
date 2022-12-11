@@ -23,11 +23,7 @@ class ErrorResponse(BaseModel):
         Gets the 'Debug' value from the current thread's context if it exists. If neither
         the thread nor the value exist, returns False.
         """
-        return (
-            context.obj.get("DEBUG", False)
-            if (context := get_current_context(silent=True))
-            else False
-        )
+        return context.obj.get("DEBUG", False) if (context := get_current_context(silent=True)) else False
 
     def as_string(self) -> str:
         """
@@ -61,14 +57,10 @@ class GetJokeResponse(BaseModel):
         """
         joke_type = values.get("type", "").lower()
         if joke_type == Types.SINGLE.value:
-            assert "joke" in values and (
-                "setup" not in values and "delivery" not in values
-            ), SINGLE_JOKE_ERROR
+            assert "joke" in values and ("setup" not in values and "delivery" not in values), SINGLE_JOKE_ERROR
             return values
         if joke_type == Types.TWOPART.value:
-            assert "joke" not in values and (
-                "setup" in values and "delivery" in values
-            ), TWOPART_JOKE_ERROR
+            assert "joke" not in values and ("setup" in values and "delivery" in values), TWOPART_JOKE_ERROR
             return values
         raise ValueError(INVALID_RESPONSE)
 

@@ -26,8 +26,4 @@ def build_endpoint_url(endpoint: Endpoints, params: GetEndpointParams) -> str:
     """
     url = "/".join(filter(None, [BASE_URL, endpoint.value, params.category]))
 
-    return (
-        f"{url}?{query_string}"
-        if (query_string := build_query_string(params.to_filtered_dict()))
-        else url
-    )
+    return f"{url}?{query_string}" if (query_string := build_query_string(params.to_filtered_dict())) else url
