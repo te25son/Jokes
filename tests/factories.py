@@ -23,16 +23,16 @@ class JokesResponse(BaseModel):
 # FACTORIES ==============================
 
 
-class JokeResponseFactory(ModelFactory):
+class JokeResponseFactory(ModelFactory[JokesResponse]):
     __model__ = JokesResponse
     __allow_none_optionals__ = False
 
 
-class ErrorResponseFactory(ModelFactory):
+class ErrorResponseFactory(ModelFactory[ErrorResponse]):
     __model__ = ErrorResponse
 
 
-class GetEndpointParamsFactory(ModelFactory):
+class GetEndpointParamsFactory(ModelFactory[GetEndpointParams]):
     __model__ = GetEndpointParams
     __allow_none_optionals__ = False
 

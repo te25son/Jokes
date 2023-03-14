@@ -1,3 +1,5 @@
+from typing import Any
+
 from click import get_current_context
 from pydantic import BaseModel, root_validator
 
@@ -44,7 +46,7 @@ class GetJokeResponse(BaseModel):
     delivery: str | None = None
 
     @root_validator(pre=True)
-    def check_joke_type_contains_correct_properties(cls, values: dict) -> dict:
+    def check_joke_type_contains_correct_properties(cls, values: dict[str, Any]) -> dict[str, Any]:
         """
         Check that the joke type contains the correct content. A single type
         joke should only contain the joke property and neither delivery nor setup.
@@ -66,5 +68,5 @@ class GetJokeResponse(BaseModel):
         # There are only two possible values (single, twopart) since this is checked
         # in the validation
         if self.type.lower() == Types.SINGLE.value:
-            return self.joke
-        return "\n".join([self.setup, self.delivery])
+            return self.joke  # type: ignore
+        return "\n".join([self.setup, self.delivery])  # type: ignore
