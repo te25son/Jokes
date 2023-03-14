@@ -55,6 +55,6 @@ def jokes(ctx: Context, debug: bool) -> None:
 def get(ctx: Context, category: str, type: str, flags: tuple[str], lang: str, safe: bool) -> None:
     ctx.obj["SAFE_MODE"] = safe
 
-    params = GetEndpointParams(type=type, category=category, lang=lang, blacklist_flags=list(flags))  # type: ignore
+    params = GetEndpointParams(type=type, category=category, lang=lang, blacklist_flags=list(flags))
 
     click.echo(get_joke(params))
