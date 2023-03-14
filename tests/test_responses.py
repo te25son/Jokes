@@ -26,7 +26,7 @@ from .factories import (
         id="Test joke with only joke parameter succeeds"
     )
 ])
-def test_joke_response_succeeds(response: JokesResponse):
+def test_joke_response_succeeds(response: JokesResponse) -> None:
     joke_response = GetJokeResponse(**response.dict(exclude_none=True))
 
     assert joke_response.joke == response.joke
@@ -75,7 +75,7 @@ def test_joke_response_succeeds(response: JokesResponse):
         id="Validation fails with invalid type"
     ),
 ])
-def test_joke_response_fails(response: JokesResponse, error_msg: str):
+def test_joke_response_fails(response: JokesResponse, error_msg: str) -> None:
     with pytest.raises(ValidationError, match=error_msg):
         GetJokeResponse(**response.dict(exclude_none=True))
 
@@ -87,11 +87,11 @@ def test_joke_response_fails(response: JokesResponse, error_msg: str):
     ),
     pytest.param(
         (response := build_twopart_joke_response()),
-        "\n".join([response.setup, response.delivery]),
+        "\n".join([response.setup, response.delivery]), # type: ignore
         id="Twopart joke returns the joined setup and delivery"
     )
 ])
-def test_extract_joke(response: JokesResponse, expected: str):
+def test_extract_joke(response: JokesResponse, expected: str) -> None:
     joke_response = GetJokeResponse(**response.dict(exclude_none=True))
 
     assert joke_response.extract_joke() == expected
@@ -101,7 +101,7 @@ def test_extract_joke(response: JokesResponse, expected: str):
     pytest.param({"DEBUG": (expected := False)}, expected, id="False when debug is set to false"),
     pytest.param({}, False, id="False when no debug in context")
 ])
-def test_debug_property_relies_on_context(context_obj: dict, expected: bool):
+def test_debug_property_relies_on_context(context_obj: dict[str, bool], expected: bool) -> None:
     with click.Context(click.Command("joke"), obj=context_obj):
         error = ErrorResponse(**ErrorResponseFactory.build().dict())
         assert error.debug == expected
@@ -114,19 +114,19 @@ def test_debug_property_relies_on_context(context_obj: dict, expected: bool):
         id="Internal error returns internal joke api error"
     ),
     pytest.param(
-        (response := ErrorResponseFactory.build(internalError=False)),
+        (response := ErrorResponseFactory.build(internalError=False)),  # type: ignore
         True,
-        "\n".join([response.message, response.additionalInfo] + response.causedBy),
+        "\n".join([response.message, response.additionalInfo] + response.causedBy),  # type: ignore
         id="Error with debug and no internal error returns joined messages"
     ),
     pytest.param(
-        (response := ErrorResponseFactory.build(internalError=False)),
+        (response := ErrorResponseFactory.build(internalError=False)),  # type: ignore
         False,
-        "\n".join(response.causedBy),
+        "\n".join(response.causedBy),  # type: ignore
         id="Error without debug and no internal error returns only caused by"
     ),
 ])
-def test_error_to_string(response: ErrorResponse, debug: bool, expected: str):
+def test_error_to_string(response: ErrorResponse, debug: bool, expected: str) -> None:
     with click.Context(click.Command("joke"), obj={"DEBUG": debug}):
         assert response.as_string() == expected
 # fmt: on

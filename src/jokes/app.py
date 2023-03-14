@@ -11,7 +11,7 @@ from jokes.requests import get_joke
 @click.group()
 @click.option("--debug/--no-debug", "debug", default=False)
 @click.pass_context
-def jokes(ctx: Context, debug: bool):
+def jokes(ctx: Context, debug: bool) -> None:
     ctx.ensure_object(dict)
     ctx.obj["DEBUG"] = debug
 
@@ -55,6 +55,6 @@ def jokes(ctx: Context, debug: bool):
 def get(ctx: Context, category: str, type: str, flags: tuple[str], lang: str, safe: bool) -> None:
     ctx.obj["SAFE_MODE"] = safe
 
-    params = GetEndpointParams(type=type, category=category, lang=lang, blacklist_flags=list(flags))
+    params = GetEndpointParams(type=type, category=category, lang=lang, blacklist_flags=list(flags))  # type: ignore
 
     click.echo(get_joke(params))

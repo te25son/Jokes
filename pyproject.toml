@@ -15,7 +15,6 @@ pydantic = "^1.9.1"
 jokes = "jokes.app:jokes"
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^0.961"
 pytest = "^7.2.0"
 pytest-httpx = "^0.21.1"
 nox = "^2022.8.7"
@@ -23,6 +22,7 @@ black = "^22.10.0"
 pytest-cov = "^4.0.0"
 pydantic-factories = "^1.13.0"
 ruff = "^0.0.254"
+mypy = "^1.1.1"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
@@ -35,6 +35,13 @@ source = ["jokes"]
 show_missing = true
 fail_under = 100
 exclude_lines = ["if TYPE_CHECKING:"]
+
+[tool.mypy]
+strict = true
+disallow_untyped_decorators = false
+disallow_subclassing_any = false
+warn_return_any = false
+warn_unused_ignores = true
 
 [tool.black]
 line-length = 120

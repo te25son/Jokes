@@ -17,15 +17,15 @@ from .factories import (
 # fmt: off
 class TestRequests:
     @pytest.fixture(autouse=True)
-    def set_common_fixtures(self, httpx_mock: HTTPXMock):
+    def set_common_fixtures(self, httpx_mock: HTTPXMock) -> None:
         self.mocker = httpx_mock
 
     @pytest.mark.parametrize("status_code", [
-        pytest.param((code := 400), id=f"Invalid {code}"),
-        pytest.param((code := 404), id=f"Invalid {code}"),
-        pytest.param((code := 500), id=f"Invalid {code}")
+        pytest.param((code := 400), id=f"Invalid {code}"),  # type: ignore
+        pytest.param((code := 404), id=f"Invalid {code}"),  # type: ignore
+        pytest.param((code := 500), id=f"Invalid {code}"),  # type: ignore
     ])
-    def test_get_joke_fails_with_status_code(self, status_code: int):
+    def test_get_joke_fails_with_status_code(self, status_code: int) -> None:
         self.mocker.add_response(status_code=status_code)
         with pytest.raises(Exception, match=UNEXPECTED_ERROR):
             get_joke(GetEndpointParamsFactory.build(factory_use_construct=True))
@@ -44,7 +44,7 @@ class TestRequests:
             id="Test error joke response succeeds"
         ),
     ])
-    def test_get_joke_succeeds(self, params: GetEndpointParams):
+    def test_get_joke_succeeds(self, params: GetEndpointParams) -> None:
         if params.type == Types.SINGLE.value:
             response = build_single_joke_response().dict(exclude_none=True)
         elif params.type == Types.TWOPART.value:

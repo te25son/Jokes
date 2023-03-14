@@ -57,7 +57,7 @@ class TestUrls:
         flags: list[Flags],
         safe: bool,
         expected: str,
-    ):
+    ) -> None:
         """Test that the get endpoint is created correctly."""
 
         with click.Context(click.Command("joke"), obj={"SAFE_MODE": safe}):
