@@ -43,6 +43,7 @@ disallow_untyped_decorators = false
 disallow_subclassing_any = false
 warn_return_any = false
 warn_unused_ignores = true
+plugins = ["pydantic.mypy"]
 
 [tool.black]
 line-length = 120
