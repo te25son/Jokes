@@ -32,5 +32,13 @@ jobs:
     - name: Install Dev Dependencies
       run: poetry install --no-interaction --only dev
 
-    - name: Test & Lint
-      run: nox -rs tests lint
+    - name: Install Just
+      uses: extractions/setup-just@v1
+      with:
+        just-version: '1.13.0'
+
+    - name: Check
+      run: just check
+
+    - name: Test
+      run: just test
