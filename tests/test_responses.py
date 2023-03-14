@@ -1,15 +1,10 @@
 import click
-from pydantic import ValidationError
 import pytest
+from pydantic import ValidationError
 
 from jokes.models.responses import ErrorResponse, GetJokeResponse
 from jokes.options import Types
-from jokes.utils.messages import (
-    INTERNAL_JOKE_API_ERROR,
-    INVALID_RESPONSE,
-    SINGLE_JOKE_ERROR,
-    TWOPART_JOKE_ERROR,
-)
+from jokes.utils.messages import INTERNAL_JOKE_API_ERROR, INVALID_RESPONSE, SINGLE_JOKE_ERROR, TWOPART_JOKE_ERROR
 
 from .factories import (
     ErrorResponseFactory,

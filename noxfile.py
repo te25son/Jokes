@@ -18,15 +18,8 @@ def tests(session: Session):
 @nox.session(python=python_versions)
 def lint(session: Session):
     args = session.posargs or locations
-    session.install("flake8", "flake8-black", "flake8-import-order")
-    session.run("flake8", *args)
-
-
-@nox.session(python=python_versions[0], tags=["clean"])
-def isort(session: Session):
-    args = session.posargs or locations
-    session.install("isort")
-    session.run("isort", *args)
+    session.install("ruff")
+    session.run("ruff", *args)
 
 
 @nox.session(python=python_versions[0], tags=["clean"])
