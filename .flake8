@@ -1,8 +1,0 @@
-[flake8]
-max-line-length = 130
-select = BLK,C,F,W,I
-# E203,W503 don't play well with black (BLK)
-ignore = E203,W503,E731,I100,I101,I202
-exclude = __init__.py
-application-import-names = jokes,tests
-import-order-style = google

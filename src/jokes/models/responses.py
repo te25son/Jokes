@@ -3,12 +3,7 @@ from pydantic import BaseModel, root_validator
 
 from jokes.models import Flags
 from jokes.options import Types
-from jokes.utils.messages import (
-    INTERNAL_JOKE_API_ERROR,
-    INVALID_RESPONSE,
-    SINGLE_JOKE_ERROR,
-    TWOPART_JOKE_ERROR,
-)
+from jokes.utils.messages import INTERNAL_JOKE_API_ERROR, INVALID_RESPONSE, SINGLE_JOKE_ERROR, TWOPART_JOKE_ERROR
 
 
 class ErrorResponse(BaseModel):

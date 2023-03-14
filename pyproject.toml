@@ -16,15 +16,13 @@ jokes = "jokes.app:jokes"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^0.961"
-pylint = "^2.14.4"
 pytest = "^7.2.0"
 pytest-httpx = "^0.21.1"
 nox = "^2022.8.7"
 black = "^22.10.0"
 pytest-cov = "^4.0.0"
-isort = "^5.10.1"
-flake8 = "^5.0.4"
 pydantic-factories = "^1.13.0"
+ruff = "^0.0.254"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
@@ -41,12 +39,27 @@ exclude_lines = ["if TYPE_CHECKING:"]
 [tool.black]
 line-length = 120
 
-[tool.isort]
-profile = "google"
-order_by_type = true
-force_single_line = false
-multi_line_output = 3
-include_trailing_comma = true
+[tool.ruff]
+exclude = ["__init__.py"]
+fix = true
+ignore = ["E731"]
+line-length = 120
+select = [
+    "C",
+    "F", # Pyflakes
+    "I", # Isort
+    "W", # Warning
+    "B", # Flake8-Bugbear
+]
+
+[tool.ruff.mccabe]
+# Flag errors (`C901`) whenever the complexity level exceeds 5.
+max-complexity = 5
+
+[tool.ruff.isort]
+order-by-type = true
+force-single-line = false
+known-first-party = ["jokes"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

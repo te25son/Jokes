@@ -1,5 +1,5 @@
-from click.testing import CliRunner, Result
 import pytest
+from click.testing import CliRunner, Result
 from pytest_httpx import HTTPXMock
 
 from jokes.app import jokes
@@ -140,10 +140,10 @@ class TestCLI:
 
         return assertion(self.invoke_get(args))
 
-    def invoke_get(self, args: list[str] = []) -> Result:
+    def invoke_get(self, args: list[str] | None = None) -> Result:
         """Invokes the get command with the given arguments and returns the result."""
 
-        return self.runner.invoke(jokes, ["get", *args])
+        return self.runner.invoke(jokes, ["get", *(args or [])])
 
     def assert_success(self, result: Result) -> None:
         """Checks that the result did not throw an exception."""
