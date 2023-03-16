@@ -15,10 +15,10 @@ test:
     pytest -n 2 --cov --random-order
 
 # Run linter and formatter
-fix: (lint) (format)
+fix: (lint) (format) (pre-commit-fix)
 
 # Run lint, format, and type checks
-check: (lint-check) (format-check) (type-check)
+check: (lint-check) (format-check) (type-check) (pre-commit-check)
 
 _lint args="":
     ruff {{locations}} {{args}}
@@ -41,3 +41,14 @@ format-check: (_format "--check")
 # Run type checker
 type-check:
     mypy {{locations}}
+
+_pre-commit +hooks:
+    @for hook in {{hooks}}; do \
+        pre-commit run $hook --all-files; \
+    done;
+
+# Run misc pre commit checks
+pre-commit-check: (_pre-commit "check-toml" "check-yaml" "check-toml")
+
+# Runs misc pre commit fixes
+pre-commit-fix: (_pre-commit "end-of-file-fixer" "trailing-whitespace")
