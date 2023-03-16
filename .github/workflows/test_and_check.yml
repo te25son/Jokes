@@ -37,6 +37,10 @@ jobs:
       with:
         just-version: '1.13.0'
 
+    - uses: pre-commit/action@v3.0.0
+      with:
+        extra_args: --hook-stage manual --all-files
+
     - name: Check
       run: just check
 
