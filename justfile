@@ -48,7 +48,7 @@ _pre-commit +hooks:
     done;
 
 # Run misc pre commit checks
-pre-commit-check: (_pre-commit "check-toml" "check-yaml" "check-toml")
+pre-commit-check: (_pre-commit "check-toml" "check-yaml" "check-json")
 
 # Runs misc pre commit fixes
 pre-commit-fix: (_pre-commit "end-of-file-fixer" "trailing-whitespace")
