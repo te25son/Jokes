@@ -1,24 +1,34 @@
-default: fix
+default: fix-all
 
 locations := "./src ./tests"
 
 alias t := test
 alias f := fix
 alias c := check
+alias h := help
+alias p := pre-commit-all
+alias fa := fix-all
+alias ca := check-all
 
 # Show all available recipes
 help:
-    @just -l
+    @just --list
 
 # Run all tests
 test:
     pytest -n 2 --cov --random-order
 
-# Run linter and formatter
-fix: (lint) (format) (pre-commit-fix)
+# Run linter and formatter (no pre-commit)
+fix: (lint) (format)
 
-# Run lint, format, and type checks
-check: (lint-check) (format-check) (type-check) (pre-commit-check)
+# Run all fixes (including pre-commit)
+fix-all: (lint) (format) (pre-commit-fix)
+
+# Run lint, format, and type checks (no pre-commit)
+check: (lint-check) (format-check) (type-check)
+
+# Run all checks (including pre-commit)
+check-all: (lint-check) (format-check) (type-check) (pre-commit-check)
 
 _lint args="":
     ruff {{locations}} {{args}}
@@ -46,6 +56,10 @@ _pre-commit +hooks:
     @for hook in {{hooks}}; do \
         pre-commit run $hook --all-files; \
     done;
+
+# Run all pre-commit hooks on all files
+pre-commit-all:
+    pre-commit run --all-files
 
 # Run misc pre commit checks
 pre-commit-check: (_pre-commit "check-toml" "check-yaml" "check-json")
