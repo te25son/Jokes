@@ -30,14 +30,17 @@ Jokes are taken from the [public JokeAPI](https://v2.jokeapi.dev/). A lot of the
 
 ## How to use it
 
-To run jokes locally you will first have to install poetry, a package manager for python. Follow the installation instruction on [poetry's website](https://python-poetry.org/docs/).
+Jokes has three dependencies that will have to be installed prior to running locally.
 
-Once installed, clone this repo and "cd" your way into the created folder, e.g. `cd jokes`.
+1. [poetry](https://python-poetry.org/docs/#installation)
+2. [pre-commit](https://pre-commit.com/#installation)
+3. [just](https://github.com/casey/just#packages)
 
-You will then have two options:
+Once all three have been installed, clone this repo and "cd" your way into the created folder, e.g. `cd jokes`.
 
-1. Run the command `poetry shell` which activates the virtual environment. Once activated, you can simply call `jokes get` in your terminal and the jokes will be displayed on your screen. Don't forget to `exit` the virtual environment when finished laughing.
-2. Forget the virtual environment and run the command `poetry run jokes get`. Any arguments you wish to add can come after this.
+To setup the environment run `just setup`, and activate the virtual environment created by poetry with `poetry shell`.
+
+You should now be able to run the `jokes` command. Try it out by running `jokes get`.
 
 ## Options (arguments)
 
@@ -105,4 +108,4 @@ Errors are typically returned as "An unexpected error occurred." If you wish to 
 
 ### Testing
 
-Tests are written in pytest and can be called using either `python -m pytest tests/` if the virtual environment is running, or with `poetry run python -m pytest tests/`
+Tests are written in pytest and can be called using either `just test` while the virtual environemnt is activated.

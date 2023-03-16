@@ -14,6 +14,11 @@ alias ca := check-all
 help:
     @just --list
 
+setup:
+    poetry install
+    pre-commit install
+    @echo "\nSetup finished. Conisider running 'poetry shell' to activate the virtual environment."
+
 # Run all tests
 test:
     pytest -n 2 --cov --random-order
@@ -30,7 +35,7 @@ check: (lint-check) (format-check) (type-check)
 # Run all checks (including pre-commit)
 check-all: (lint-check) (format-check) (type-check) (pre-commit-check)
 
-_lint args="":
+_lint *args:
     ruff {{locations}} {{args}}
 
 # Run linter
@@ -39,7 +44,7 @@ lint: (_lint)
 # Run linter and throw error on fix
 lint-check: (_lint "--exit-non-zero-on-fix")
 
-_format args="":
+_format *args:
     black {{locations}} {{args}}
 
 # Run formatter
